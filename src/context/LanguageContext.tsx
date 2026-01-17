@@ -19,7 +19,8 @@ const translations: Record<Language, Record<string, string>> = {
     // Hero
     "hero.title1": "L'Art Qui",
     "hero.title2": "Vit Sur Toi",
-    "hero.description": "Transformer votre vision en art corporel intemporel. Chaque pièce est une histoire unique, créée avec précision et passion.",
+    "hero.description": "Tatoueur professionnel à St-Jean-de-Matha, au cœur de Lanaudière. Transformer votre vision en art corporel intemporel. Chaque pièce est une histoire unique, créée avec précision et passion.",
+    "hero.location": "St-Jean-de-Matha, Lanaudière",
     "hero.cta.book": "Réserver une Consultation",
     "hero.cta.work": "Voir Mon Portfolio",
     
@@ -66,7 +67,7 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.viewWork": "Voir le Portfolio",
     "footer.bookSession": "Réserver une Session",
     "footer.connect": "Me Suivre",
-    "footer.connectDesc": "Suivez-moi sur les réseaux sociaux pour du contenu quotidien, des designs flash et les coulisses.",
+    "footer.connectDesc": "Suivez-moi sur les réseaux sociaux pour du contenu quotidien et les coulisses.",
     "footer.rights": "Tous droits réservés.",
     "footer.madeWith": "Fait avec",
     "footer.forLovers": "pour les amateurs d'encre",
@@ -106,7 +107,8 @@ const translations: Record<Language, Record<string, string>> = {
     // Hero
     "hero.title1": "Art That",
     "hero.title2": "Lives On You",
-    "hero.description": "Transforming your vision into timeless body art. Each piece is a unique story, crafted with precision and passion.",
+    "hero.description": "Professional tattoo artist in St-Jean-de-Matha, in the heart of Lanaudière. Transforming your vision into timeless body art. Each piece is a unique story, crafted with precision and passion.",
+    "hero.location": "St-Jean-de-Matha, Lanaudière",
     "hero.cta.book": "Book Consultation",
     "hero.cta.work": "View My Work",
     
@@ -153,7 +155,7 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.viewWork": "View Work",
     "footer.bookSession": "Book a Session",
     "footer.connect": "Connect",
-    "footer.connectDesc": "Follow me on social media for daily content, flash designs, and behind-the-scenes.",
+    "footer.connectDesc": "Follow me on social media for daily content, and behind-the-scenes.",
     "footer.rights": "All rights reserved.",
     "footer.madeWith": "Made with",
     "footer.forLovers": "for ink lovers",

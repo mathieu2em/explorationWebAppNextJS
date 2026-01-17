@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/context/LanguageContext";
+import JsonLd from "@/components/JsonLd";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -16,10 +17,38 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Mathieu Perron Tattoo | Artiste Tatoueur à St-Jean-de-Matha",
+  title: "Mathieu Perron Tattoo | Tatoueur Lanaudière | St-Jean-de-Matha",
   description:
-    "Tatouages personnalisés par Mathieu Perron à St-Jean-de-Matha. Transformez votre vision en art corporel intemporel. Réservez votre consultation aujourd'hui.",
-  keywords: ["tattoo", "tatouage", "tattoo artist", "artiste tatoueur", "St-Jean-de-Matha", "Mathieu Perron", "custom tattoo"],
+    "Tatoueur professionnel à St-Jean-de-Matha, Lanaudière. Mathieu Perron crée des tatouages personnalisés uniques. Desservant Joliette, Rawdon, Saint-Donat, Chertsey et toute la région. Réservez votre consultation!",
+  keywords: [
+    // Mots-clés principaux
+    "tatoueur lanaudière",
+    "tattoo lanaudière", 
+    "tatouage lanaudière",
+    "tatoueur st-jean-de-matha",
+    "tattoo st-jean-de-matha",
+    // Villes de Lanaudière
+    "tatoueur joliette",
+    "tattoo joliette",
+    "tatoueur rawdon",
+    "tatoueur saint-donat",
+    "tatoueur chertsey",
+    "tatoueur crabtree",
+    "tatoueur notre-dame-des-prairies",
+    "tatoueur saint-félix-de-valois",
+    "tatoueur sainte-julienne",
+    "tatoueur repentigny",
+    "tatoueur terrebonne",
+    "tatoueur mascouche",
+    // Styles
+    "tatouage personnalisé",
+    "custom tattoo",
+    "tatouage sur mesure",
+    "artiste tatoueur québec",
+    // Nom
+    "mathieu perron tattoo",
+    "matha tattoo",
+  ],
   viewport: {
     width: "device-width",
     initialScale: 1,
@@ -27,6 +56,42 @@ export const metadata: Metadata = {
     userScalable: false,
   },
   themeColor: "#0a0a0a",
+  metadataBase: new URL("https://matha.tattoo"),
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Mathieu Perron Tattoo | Tatoueur Lanaudière",
+    description: "Tatoueur professionnel à St-Jean-de-Matha, Lanaudière. Tatouages personnalisés uniques. Desservant Joliette, Rawdon, Saint-Donat et toute la région.",
+    url: "https://matha.tattoo",
+    siteName: "Matha Tattoo",
+    locale: "fr_CA",
+    type: "website",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Mathieu Perron - Tatoueur Lanaudière",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Mathieu Perron Tattoo | Tatoueur Lanaudière",
+    description: "Tatoueur professionnel à St-Jean-de-Matha. Tatouages personnalisés pour Lanaudière.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({
@@ -36,6 +101,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" className={`${playfair.variable} ${inter.variable}`}>
+      <head>
+        <JsonLd />
+      </head>
       <body className="font-body antialiased">
         <LanguageProvider>
           {children}
