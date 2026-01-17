@@ -33,6 +33,7 @@ const translations: Record<Language, Record<string, string>> = {
     "social.viewOn": "Voir sur",
     "social.followIg": "Suivre sur Instagram",
     "social.followTt": "Suivre sur TikTok",
+    "social.followFb": "Suivre sur Facebook",
     
     // Contact Form
     "contact.title1": "Réserver Votre ",
@@ -122,6 +123,7 @@ const translations: Record<Language, Record<string, string>> = {
     "social.viewOn": "View on",
     "social.followIg": "Follow on Instagram",
     "social.followTt": "Follow on TikTok",
+    "social.followFb": "Follow on Facebook",
     
     // Contact Form
     "contact.title1": "Book Your ",

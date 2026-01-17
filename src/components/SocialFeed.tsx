@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { FaInstagram, FaTiktok, FaHeart, FaComment, FaPlay } from "react-icons/fa";
+import { FaInstagram, FaTiktok, FaFacebook, FaHeart, FaComment, FaPlay } from "react-icons/fa";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSocialPosts, SocialPost } from "@/hooks/useSocialPosts";
 
@@ -217,6 +217,15 @@ export default function SocialFeed() {
           >
             <FaTiktok size={18} />
             {t("social.followTt")}
+          </a>
+          <a
+            href="https://www.facebook.com/mathieuperron1234"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <FaFacebook size={18} />
+            {t("social.followFb")}
           </a>
         </motion.div>
           </>
