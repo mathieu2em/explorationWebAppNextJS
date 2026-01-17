@@ -57,7 +57,7 @@ export async function POST(request: Request) {
     // Envoyer l'email
     const { data, error } = await resend.emails.send({
       from: "Tattoo Website <onboarding@resend.dev>", // Domaine gratuit de Resend
-      to: ["m.perron@t-b.ca"], // Email vérifié sur Resend
+      to: ["mathieu.perron95@outlook.com"], // Email vérifié sur Resend
       replyTo: email,
       subject: `🎨 Nouvelle demande de tatouage - ${name}`,
       html: `
