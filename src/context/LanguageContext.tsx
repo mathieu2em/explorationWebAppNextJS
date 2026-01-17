@@ -14,6 +14,7 @@ const translations: Record<Language, Record<string, string>> = {
   fr: {
     // Navbar
     "nav.work": "Portfolio",
+    "nav.faq": "FAQ",
     "nav.contact": "Contact",
     
     // Hero
@@ -102,6 +103,7 @@ const translations: Record<Language, Record<string, string>> = {
   en: {
     // Navbar
     "nav.work": "Work",
+    "nav.faq": "FAQ",
     "nav.contact": "Contact",
     
     // Hero

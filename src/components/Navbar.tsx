@@ -43,6 +43,12 @@ export default function Navbar() {
             >
               {t("nav.work")}
             </a>
+            <Link
+              href="/faq"
+              className="text-gray-300 hover:text-gold-400 transition-colors"
+            >
+              {t("nav.faq")}
+            </Link>
             <a
               href="#contact"
               className="text-gray-300 hover:text-gold-400 transition-colors"
@@ -93,6 +99,13 @@ export default function Navbar() {
               >
                 {t("nav.work")}
               </a>
+              <Link
+                href="/faq"
+                className="text-gray-300 hover:text-gold-400 transition-colors"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {t("nav.faq")}
+              </Link>
               <a
                 href="#contact"
                 className="text-gray-300 hover:text-gold-400 transition-colors"
