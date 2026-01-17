@@ -104,6 +104,7 @@ export default async function Image() {
               maxWidth: "800px",
               lineHeight: 1.4,
               fontFamily: "sans-serif",
+              marginBottom: "60px",
             }}
           >
             Tatouages personnalisés uniques • Studio privé
@@ -112,8 +113,6 @@ export default async function Image() {
           {/* Domain */}
           <div
             style={{
-              position: "absolute",
-              bottom: "50px",
               fontSize: 32,
               color: "#d4af37",
               fontWeight: 600,
