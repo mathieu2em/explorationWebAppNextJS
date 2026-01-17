@@ -17,7 +17,7 @@ const faqData: Record<string, FAQItem[]> = {
   fr: [
     {
       question: "Combien coûte un tatouage?",
-      answer: "Mon taux horaire est de 70$/heure. Le prix final dépend de la taille, de la complexité et de l'emplacement de votre tatouage. Je vous fournis toujours une estimation avant de commencer. Un dépôt non-remboursable est requis pour réserver votre rendez-vous.",
+      answer: "Mon taux horaire est de 70$/heure. Le prix final dépend de la taille, de la complexité et de l'emplacement de votre tatouage. Je vous fournis toujours une estimation avant de commencer.",
       icon: <FiDollarSign className="w-6 h-6" />,
     },
     {
@@ -63,14 +63,14 @@ const faqData: Record<string, FAQItem[]> = {
     },
     {
       question: "Quelles sont vos politiques d'annulation?",
-      answer: "Un dépôt non-remboursable est requis pour confirmer votre rendez-vous. Si vous devez reporter, prévenez-moi au moins 48h à l'avance et votre dépôt sera transféré à la nouvelle date. Les annulations de dernière minute ou les no-shows perdent leur dépôt.",
+      answer: "Si vous devez reporter votre rendez-vous, prévenez-moi au moins 48h à l'avance par respect pour mon temps. Les annulations de dernière minute répétées peuvent affecter vos futures réservations.",
       icon: <FiShield className="w-6 h-6" />,
     },
   ],
   en: [
     {
       question: "How much does a tattoo cost?",
-      answer: "My hourly rate is $70/hour. The final price depends on the size, complexity, and placement of your tattoo. I always provide an estimate before starting. A non-refundable deposit is required to book your appointment.",
+      answer: "My hourly rate is $70/hour. The final price depends on the size, complexity, and placement of your tattoo. I always provide an estimate before starting.",
       icon: <FiDollarSign className="w-6 h-6" />,
     },
     {
@@ -116,7 +116,7 @@ const faqData: Record<string, FAQItem[]> = {
     },
     {
       question: "What are your cancellation policies?",
-      answer: "A non-refundable deposit is required to confirm your appointment. If you need to reschedule, let me know at least 48h in advance and your deposit will be transferred to the new date. Last-minute cancellations or no-shows forfeit their deposit.",
+      answer: "If you need to reschedule your appointment, please let me know at least 48h in advance out of respect for my time. Repeated last-minute cancellations may affect your future bookings.",
       icon: <FiShield className="w-6 h-6" />,
     },
   ],
