@@ -108,7 +108,7 @@ export default function SocialFeed() {
   });
 
   return (
-    <section id="work" className="py-20 md:py-32 bg-ink-800">
+    <section id="work" className="py-20 md:py-32 bg-ink-800 scroll-mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section header */}
         <motion.div
