@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { FaInstagram, FaTiktok, FaMapMarkerAlt } from "react-icons/fa";
 import { useLanguage } from "@/context/LanguageContext";
+import FloatingBubbles from "./FloatingBubbles";
 
 export default function Hero() {
   const { t } = useLanguage();
@@ -23,6 +24,9 @@ export default function Hero() {
           }}
         />
       </div>
+
+      {/* Floating tattoo bubbles */}
+      <FloatingBubbles />
 
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
