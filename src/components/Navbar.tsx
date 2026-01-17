@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 import { FaInstagram, FaTiktok, FaFacebook } from "react-icons/fa";
 import { HiMenu, HiX } from "react-icons/hi";
 import { useLanguage } from "@/context/LanguageContext";
@@ -11,6 +12,8 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { t } = useLanguage();
+  const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -19,6 +22,28 @@ export default function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, sectionId: string) => {
+    e.preventDefault();
+    setIsMobileMenuOpen(false);
+    
+    // Si on est déjà sur la page d'accueil, scroll directement
+    if (pathname === "/") {
+      const section = document.getElementById(sectionId);
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth" });
+      }
+    } else {
+      // Sinon, naviguer vers la page d'accueil puis scroll avec délai
+      router.push("/");
+      setTimeout(() => {
+        const section = document.getElementById(sectionId);
+        if (section) {
+          section.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 600);
+    }
+  };
 
   return (
     <nav
@@ -39,7 +64,8 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-8">
             <a
               href="/#work"
-              className="text-gray-300 hover:text-gold-400 transition-colors"
+              onClick={(e) => handleAnchorClick(e, "work")}
+              className="text-gray-300 hover:text-gold-400 transition-colors cursor-pointer"
             >
               {t("nav.work")}
             </a>
@@ -51,7 +77,8 @@ export default function Navbar() {
             </Link>
             <a
               href="/#contact"
-              className="text-gray-300 hover:text-gold-400 transition-colors"
+              onClick={(e) => handleAnchorClick(e, "contact")}
+              className="text-gray-300 hover:text-gold-400 transition-colors cursor-pointer"
             >
               {t("nav.contact")}
             </a>
@@ -102,8 +129,8 @@ export default function Navbar() {
             <div className="flex flex-col space-y-4">
               <a
                 href="/#work"
-                className="text-gray-300 hover:text-gold-400 transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={(e) => handleAnchorClick(e, "work")}
+                className="text-gray-300 hover:text-gold-400 transition-colors cursor-pointer"
               >
                 {t("nav.work")}
               </a>
@@ -116,8 +143,8 @@ export default function Navbar() {
               </Link>
               <a
                 href="/#contact"
-                className="text-gray-300 hover:text-gold-400 transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={(e) => handleAnchorClick(e, "contact")}
+                className="text-gray-300 hover:text-gold-400 transition-colors cursor-pointer"
               >
                 {t("nav.contact")}
               </a>
