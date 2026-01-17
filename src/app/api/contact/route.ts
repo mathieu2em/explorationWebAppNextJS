@@ -1,7 +1,34 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import twilio from "twilio";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+
+// Fonction pour envoyer un SMS de notification
+async function sendSmsNotification(name: string, tattooStyle: string, placement: string) {
+  const accountSid = process.env.TWILIO_ACCOUNT_SID;
+  const authToken = process.env.TWILIO_AUTH_TOKEN;
+  const twilioPhone = process.env.TWILIO_PHONE_NUMBER;
+  const myPhone = process.env.MY_PHONE_NUMBER;
+
+  if (!accountSid || !authToken || !twilioPhone || !myPhone) {
+    console.log("SMS notifications not configured - skipping");
+    return;
+  }
+
+  try {
+    const client = twilio(accountSid, authToken);
+    await client.messages.create({
+      body: `🎨 Nouvelle demande de tattoo!\n\nClient: ${name}\nStyle: ${tattooStyle}\nEmplacement: ${placement}\n\nVérifie tes emails pour les détails!`,
+      from: twilioPhone,
+      to: myPhone,
+    });
+    console.log("SMS notification sent successfully");
+  } catch (error) {
+    console.error("Failed to send SMS:", error);
+    // On ne fait pas échouer la requête si le SMS échoue
+  }
+}
 
 export async function POST(request: Request) {
   try {
@@ -108,6 +135,9 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
+
+    // Envoyer le SMS de notification (en arrière-plan, n'affecte pas la réponse)
+    await sendSmsNotification(name, tattooStyle, placement);
 
     return NextResponse.json({ success: true, id: data?.id });
   } catch (error) {
