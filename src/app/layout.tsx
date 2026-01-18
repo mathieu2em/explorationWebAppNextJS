@@ -3,6 +3,7 @@ import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import { LanguageProvider } from "@/context/LanguageContext";
 import JsonLd from "@/components/JsonLd";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -97,6 +98,7 @@ export default function RootLayout({
         <JsonLd />
       </head>
       <body className="font-body antialiased">
+        <GoogleAnalytics />
         <LanguageProvider>
           {children}
         </LanguageProvider>
