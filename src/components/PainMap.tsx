@@ -13,91 +13,99 @@ interface BodyZone {
 }
 
 // Pain levels: 1 = très supportable, 5 = très douloureux
+// Spacing: 3px gaps between zones for better mobile touch targets
 const bodyZonesFront: BodyZone[] = [
-  // Head & Neck
-  { id: "head", path: "M 150,30 Q 130,30 125,50 Q 120,75 130,90 Q 140,105 150,105 Q 160,105 170,90 Q 180,75 175,50 Q 170,30 150,30 Z", painLevel: 4, nameFr: "Tête", nameEn: "Head" },
-  { id: "neck-front", path: "M 140,105 L 160,105 L 165,130 L 135,130 Z", painLevel: 5, nameFr: "Cou", nameEn: "Neck" },
-  
-  // Torso
-  { id: "chest-left", path: "M 135,130 L 150,130 L 150,180 L 120,180 L 115,150 Q 120,135 135,130 Z", painLevel: 3, nameFr: "Poitrine gauche", nameEn: "Left chest" },
-  { id: "chest-right", path: "M 150,130 L 165,130 Q 180,135 185,150 L 180,180 L 150,180 Z", painLevel: 3, nameFr: "Poitrine droite", nameEn: "Right chest" },
-  { id: "stomach", path: "M 125,180 L 175,180 L 175,220 L 125,220 Z", painLevel: 3, nameFr: "Ventre", nameEn: "Stomach" },
-  { id: "ribs-left", path: "M 110,150 L 120,180 L 125,220 L 115,220 L 105,180 Z", painLevel: 5, nameFr: "Côtes gauches", nameEn: "Left ribs" },
-  { id: "ribs-right", path: "M 190,150 L 180,180 L 175,220 L 185,220 L 195,180 Z", painLevel: 5, nameFr: "Côtes droites", nameEn: "Right ribs" },
-  { id: "lower-abs", path: "M 130,220 L 170,220 L 165,260 L 135,260 Z", painLevel: 4, nameFr: "Bas-ventre", nameEn: "Lower abdomen" },
-  
-  // Arms
-  { id: "shoulder-left", path: "M 115,130 Q 95,135 90,150 L 105,150 L 115,135 Z", painLevel: 2, nameFr: "Épaule gauche", nameEn: "Left shoulder" },
-  { id: "shoulder-right", path: "M 185,130 Q 205,135 210,150 L 195,150 L 185,135 Z", painLevel: 2, nameFr: "Épaule droite", nameEn: "Right shoulder" },
-  { id: "upper-arm-left", path: "M 90,150 L 105,150 L 100,200 L 85,200 Z", painLevel: 2, nameFr: "Bras gauche (ext.)", nameEn: "Left upper arm" },
-  { id: "upper-arm-right", path: "M 195,150 L 210,150 L 215,200 L 200,200 Z", painLevel: 2, nameFr: "Bras droit (ext.)", nameEn: "Right upper arm" },
-  { id: "inner-arm-left", path: "M 100,200 L 105,150 L 110,150 L 110,200 Z", painLevel: 4, nameFr: "Bras gauche (int.)", nameEn: "Left inner arm" },
-  { id: "inner-arm-right", path: "M 190,150 L 195,150 L 200,200 L 190,200 Z", painLevel: 4, nameFr: "Bras droit (int.)", nameEn: "Right inner arm" },
-  { id: "elbow-left", path: "M 82,200 L 110,200 L 108,220 L 80,220 Z", painLevel: 5, nameFr: "Coude gauche", nameEn: "Left elbow" },
-  { id: "elbow-right", path: "M 190,200 L 220,200 L 220,220 L 192,220 Z", painLevel: 5, nameFr: "Coude droit", nameEn: "Right elbow" },
-  { id: "forearm-left", path: "M 75,220 L 108,220 L 100,280 L 70,280 Z", painLevel: 2, nameFr: "Avant-bras gauche", nameEn: "Left forearm" },
-  { id: "forearm-right", path: "M 192,220 L 225,220 L 230,280 L 200,280 Z", painLevel: 2, nameFr: "Avant-bras droit", nameEn: "Right forearm" },
-  { id: "wrist-left", path: "M 65,280 L 100,280 L 95,300 L 60,300 Z", painLevel: 4, nameFr: "Poignet gauche", nameEn: "Left wrist" },
-  { id: "wrist-right", path: "M 200,280 L 235,280 L 240,300 L 205,300 Z", painLevel: 4, nameFr: "Poignet droit", nameEn: "Right wrist" },
-  { id: "hand-left", path: "M 55,300 L 95,300 L 90,340 L 50,340 Z", painLevel: 5, nameFr: "Main gauche", nameEn: "Left hand" },
-  { id: "hand-right", path: "M 205,300 L 245,300 L 250,340 L 210,340 Z", painLevel: 5, nameFr: "Main droite", nameEn: "Right hand" },
-  
-  // Legs
-  { id: "hip-left", path: "M 120,260 L 135,260 L 135,280 L 115,280 Z", painLevel: 3, nameFr: "Hanche gauche", nameEn: "Left hip" },
-  { id: "hip-right", path: "M 165,260 L 180,260 L 185,280 L 165,280 Z", painLevel: 3, nameFr: "Hanche droite", nameEn: "Right hip" },
-  { id: "thigh-left", path: "M 115,280 L 145,280 L 140,360 L 110,360 Z", painLevel: 2, nameFr: "Cuisse gauche", nameEn: "Left thigh" },
-  { id: "thigh-right", path: "M 155,280 L 185,280 L 190,360 L 160,360 Z", painLevel: 2, nameFr: "Cuisse droite", nameEn: "Right thigh" },
-  { id: "inner-thigh-left", path: "M 140,280 L 150,280 L 150,360 L 140,360 Z", painLevel: 4, nameFr: "Intérieur cuisse G", nameEn: "Left inner thigh" },
-  { id: "inner-thigh-right", path: "M 150,280 L 160,280 L 160,360 L 150,360 Z", painLevel: 4, nameFr: "Intérieur cuisse D", nameEn: "Right inner thigh" },
-  { id: "knee-left", path: "M 110,360 L 145,360 L 143,390 L 108,390 Z", painLevel: 5, nameFr: "Genou gauche", nameEn: "Left knee" },
-  { id: "knee-right", path: "M 155,360 L 190,360 L 192,390 L 157,390 Z", painLevel: 5, nameFr: "Genou droit", nameEn: "Right knee" },
-  { id: "calf-left", path: "M 108,390 L 143,390 L 138,460 L 112,460 Z", painLevel: 2, nameFr: "Mollet gauche", nameEn: "Left calf" },
-  { id: "calf-right", path: "M 157,390 L 192,390 L 188,460 L 162,460 Z", painLevel: 2, nameFr: "Mollet droit", nameEn: "Right calf" },
-  { id: "ankle-left", path: "M 112,460 L 138,460 L 135,480 L 115,480 Z", painLevel: 4, nameFr: "Cheville gauche", nameEn: "Left ankle" },
-  { id: "ankle-right", path: "M 162,460 L 188,460 L 185,480 L 165,480 Z", painLevel: 4, nameFr: "Cheville droite", nameEn: "Right ankle" },
-  { id: "foot-left", path: "M 110,480 L 140,480 L 145,510 L 105,510 Z", painLevel: 5, nameFr: "Pied gauche", nameEn: "Left foot" },
-  { id: "foot-right", path: "M 160,480 L 190,480 L 195,510 L 155,510 Z", painLevel: 5, nameFr: "Pied droit", nameEn: "Right foot" },
+  // Head & Neck (3px gap below head)
+  { id: "head", path: "M 150,28 Q 128,28 123,50 Q 118,77 129,93 Q 140,107 150,107 Q 160,107 171,93 Q 182,77 177,50 Q 172,28 150,28 Z", painLevel: 5, nameFr: "Tête", nameEn: "Head" },
+  { id: "neck-front", path: "M 138,110 L 162,110 L 167,132 L 133,132 Z", painLevel: 5, nameFr: "Cou", nameEn: "Neck" },
+
+  // Torso (3px gaps between sections)
+  { id: "chest-left", path: "M 133,135 L 142,135 L 142,178 L 118,178 L 113,152 Q 118,138 133,135 Z", painLevel: 3, nameFr: "Poitrine gauche", nameEn: "Left chest" },
+  { id: "sternum", path: "M 145,135 L 155,135 L 155,178 L 145,178 Z", painLevel: 5, nameFr: "Sternum", nameEn: "Sternum" },
+  { id: "chest-right", path: "M 158,135 L 167,135 Q 182,138 187,152 L 182,178 L 158,178 Z", painLevel: 3, nameFr: "Poitrine droite", nameEn: "Right chest" },
+  { id: "stomach", path: "M 123,181 L 177,181 L 177,218 L 123,218 Z", painLevel: 3, nameFr: "Ventre", nameEn: "Stomach" },
+  { id: "ribs-left", path: "M 107,152 L 115,178 L 120,218 L 110,218 L 100,178 Z", painLevel: 5, nameFr: "Côtes gauches", nameEn: "Left ribs" },
+  { id: "ribs-right", path: "M 193,152 L 185,178 L 180,218 L 190,218 L 200,178 Z", painLevel: 5, nameFr: "Côtes droites", nameEn: "Right ribs" },
+  { id: "lower-abs", path: "M 128,221 L 172,221 L 167,258 L 133,258 Z", painLevel: 4, nameFr: "Bas-ventre", nameEn: "Lower abdomen" },
+
+  // Arms (moved 12px outward from body for better armpit access)
+  { id: "shoulder-left", path: "M 108,135 Q 82,140 75,155 L 93,155 L 108,140 Z", painLevel: 2, nameFr: "Épaule gauche", nameEn: "Left shoulder" },
+  { id: "shoulder-right", path: "M 192,135 Q 218,140 225,155 L 207,155 L 192,140 Z", painLevel: 2, nameFr: "Épaule droite", nameEn: "Right shoulder" },
+  { id: "armpit-left", path: "M 93,158 L 110,158 L 110,180 L 93,180 Z", painLevel: 5, nameFr: "Aisselle gauche", nameEn: "Left armpit" },
+  { id: "armpit-right", path: "M 190,158 L 207,158 L 207,180 L 190,180 Z", painLevel: 5, nameFr: "Aisselle droite", nameEn: "Right armpit" },
+  { id: "upper-arm-left", path: "M 75,158 L 90,158 L 85,198 L 70,198 Z", painLevel: 2, nameFr: "Bras gauche (ext.)", nameEn: "Left upper arm" },
+  { id: "upper-arm-right", path: "M 210,158 L 225,158 L 230,198 L 215,198 Z", painLevel: 2, nameFr: "Bras droit (ext.)", nameEn: "Right upper arm" },
+  { id: "inner-arm-left", path: "M 88,158 L 105,158 L 100,198 L 83,198 Z", painLevel: 4, nameFr: "Bras gauche (int.)", nameEn: "Left inner arm" },
+  { id: "inner-arm-right", path: "M 195,158 L 212,158 L 217,198 L 200,198 Z", painLevel: 4, nameFr: "Bras droit (int.)", nameEn: "Right inner arm" },
+  { id: "elbow-left", path: "M 66,201 L 100,201 L 98,221 L 64,221 Z", painLevel: 5, nameFr: "Coude gauche", nameEn: "Left elbow" },
+  { id: "elbow-right", path: "M 200,201 L 234,201 L 236,221 L 202,221 Z", painLevel: 5, nameFr: "Coude droit", nameEn: "Right elbow" },
+  { id: "forearm-left", path: "M 60,224 L 98,224 L 88,278 L 54,278 Z", painLevel: 2, nameFr: "Avant-bras gauche", nameEn: "Left forearm" },
+  { id: "forearm-right", path: "M 202,224 L 240,224 L 246,278 L 212,278 Z", painLevel: 2, nameFr: "Avant-bras droit", nameEn: "Right forearm" },
+  { id: "wrist-left", path: "M 50,281 L 88,281 L 83,301 L 45,301 Z", painLevel: 4, nameFr: "Poignet gauche", nameEn: "Left wrist" },
+  { id: "wrist-right", path: "M 212,281 L 250,281 L 255,301 L 217,301 Z", painLevel: 4, nameFr: "Poignet droit", nameEn: "Right wrist" },
+  { id: "hand-left", path: "M 41,304 L 83,304 L 78,345 L 36,345 Z", painLevel: 5, nameFr: "Main gauche", nameEn: "Left hand" },
+  { id: "hand-right", path: "M 217,304 L 259,304 L 264,345 L 222,345 Z", painLevel: 5, nameFr: "Main droite", nameEn: "Right hand" },
+
+  // Legs (3px gaps, wider inner zones)
+  { id: "hip-left", path: "M 118,261 L 135,261 L 135,278 L 113,278 Z", painLevel: 3, nameFr: "Hanche gauche", nameEn: "Left hip" },
+  { id: "hip-right", path: "M 165,261 L 182,261 L 187,278 L 165,278 Z", painLevel: 3, nameFr: "Hanche droite", nameEn: "Right hip" },
+  { id: "thigh-left", path: "M 113,281 L 138,281 L 133,358 L 108,358 Z", painLevel: 2, nameFr: "Cuisse gauche", nameEn: "Left thigh" },
+  { id: "thigh-right", path: "M 162,281 L 187,281 L 192,358 L 167,358 Z", painLevel: 2, nameFr: "Cuisse droite", nameEn: "Right thigh" },
+  { id: "inner-thigh-left", path: "M 141,281 L 148,281 L 148,358 L 136,358 Z", painLevel: 4, nameFr: "Intérieur cuisse G", nameEn: "Left inner thigh" },
+  { id: "inner-thigh-right", path: "M 152,281 L 159,281 L 164,358 L 152,358 Z", painLevel: 4, nameFr: "Intérieur cuisse D", nameEn: "Right inner thigh" },
+  { id: "knee-left", path: "M 108,361 L 145,361 L 143,393 L 106,393 Z", painLevel: 5, nameFr: "Genou gauche", nameEn: "Left knee" },
+  { id: "knee-right", path: "M 155,361 L 192,361 L 194,393 L 157,393 Z", painLevel: 5, nameFr: "Genou droit", nameEn: "Right knee" },
+  { id: "shin-left", path: "M 106,396 L 143,396 L 138,458 L 110,458 Z", painLevel: 4, nameFr: "Tibia gauche", nameEn: "Left shin" },
+  { id: "shin-right", path: "M 157,396 L 194,396 L 190,458 L 162,458 Z", painLevel: 4, nameFr: "Tibia droit", nameEn: "Right shin" },
+  { id: "ankle-left", path: "M 110,461 L 138,461 L 135,481 L 113,481 Z", painLevel: 4, nameFr: "Cheville gauche", nameEn: "Left ankle" },
+  { id: "ankle-right", path: "M 162,461 L 190,461 L 187,481 L 165,481 Z", painLevel: 4, nameFr: "Cheville droite", nameEn: "Right ankle" },
+  { id: "foot-left", path: "M 108,484 L 140,484 L 145,515 L 103,515 Z", painLevel: 5, nameFr: "Pied gauche", nameEn: "Left foot" },
+  { id: "foot-right", path: "M 160,484 L 192,484 L 197,515 L 155,515 Z", painLevel: 5, nameFr: "Pied droit", nameEn: "Right foot" },
 ];
 
 const bodyZonesBack: BodyZone[] = [
-  // Head & Neck
-  { id: "head-back", path: "M 150,30 Q 130,30 125,50 Q 120,75 130,90 Q 140,105 150,105 Q 160,105 170,90 Q 180,75 175,50 Q 170,30 150,30 Z", painLevel: 4, nameFr: "Arrière tête", nameEn: "Back of head" },
-  { id: "neck-back", path: "M 140,105 L 160,105 L 165,130 L 135,130 Z", painLevel: 5, nameFr: "Nuque", nameEn: "Nape" },
-  
-  // Back
-  { id: "upper-back-left", path: "M 115,130 L 150,130 L 150,180 L 110,180 Z", painLevel: 2, nameFr: "Haut du dos G", nameEn: "Upper back left" },
-  { id: "upper-back-right", path: "M 150,130 L 185,130 L 190,180 L 150,180 Z", painLevel: 2, nameFr: "Haut du dos D", nameEn: "Upper back right" },
-  { id: "spine-upper", path: "M 145,130 L 155,130 L 155,200 L 145,200 Z", painLevel: 5, nameFr: "Colonne (haut)", nameEn: "Upper spine" },
-  { id: "mid-back-left", path: "M 110,180 L 145,180 L 145,230 L 115,230 Z", painLevel: 2, nameFr: "Milieu dos G", nameEn: "Mid back left" },
-  { id: "mid-back-right", path: "M 155,180 L 190,180 L 185,230 L 155,230 Z", painLevel: 2, nameFr: "Milieu dos D", nameEn: "Mid back right" },
-  { id: "spine-mid", path: "M 145,200 L 155,200 L 155,250 L 145,250 Z", painLevel: 5, nameFr: "Colonne (milieu)", nameEn: "Mid spine" },
-  { id: "lower-back-left", path: "M 120,230 L 145,230 L 145,270 L 125,270 Z", painLevel: 3, nameFr: "Bas du dos G", nameEn: "Lower back left" },
-  { id: "lower-back-right", path: "M 155,230 L 180,230 L 175,270 L 155,270 Z", painLevel: 3, nameFr: "Bas du dos D", nameEn: "Lower back right" },
-  { id: "spine-lower", path: "M 145,250 L 155,250 L 155,280 L 145,280 Z", painLevel: 5, nameFr: "Colonne (bas)", nameEn: "Lower spine" },
-  
-  // Arms (back view)
-  { id: "shoulder-back-left", path: "M 110,130 Q 90,140 85,155 L 100,155 L 110,140 Z", painLevel: 2, nameFr: "Épaule arrière G", nameEn: "Left back shoulder" },
-  { id: "shoulder-back-right", path: "M 190,130 Q 210,140 215,155 L 200,155 L 190,140 Z", painLevel: 2, nameFr: "Épaule arrière D", nameEn: "Right back shoulder" },
-  { id: "tricep-left", path: "M 85,155 L 105,155 L 100,210 L 80,210 Z", painLevel: 3, nameFr: "Triceps gauche", nameEn: "Left tricep" },
-  { id: "tricep-right", path: "M 195,155 L 215,155 L 220,210 L 200,210 Z", painLevel: 3, nameFr: "Triceps droit", nameEn: "Right tricep" },
-  { id: "back-elbow-left", path: "M 78,210 L 100,210 L 98,230 L 75,230 Z", painLevel: 5, nameFr: "Coude arrière G", nameEn: "Left back elbow" },
-  { id: "back-elbow-right", path: "M 200,210 L 222,210 L 225,230 L 202,230 Z", painLevel: 5, nameFr: "Coude arrière D", nameEn: "Right back elbow" },
-  { id: "back-forearm-left", path: "M 73,230 L 98,230 L 92,285 L 68,285 Z", painLevel: 2, nameFr: "Avant-bras arr. G", nameEn: "Left back forearm" },
-  { id: "back-forearm-right", path: "M 202,230 L 227,230 L 232,285 L 208,285 Z", painLevel: 2, nameFr: "Avant-bras arr. D", nameEn: "Right back forearm" },
-  
-  // Glutes & Legs
-  { id: "glute-left", path: "M 120,270 L 150,270 L 150,310 L 115,310 Z", painLevel: 1, nameFr: "Fesse gauche", nameEn: "Left glute" },
-  { id: "glute-right", path: "M 150,270 L 180,270 L 185,310 L 150,310 Z", painLevel: 1, nameFr: "Fesse droite", nameEn: "Right glute" },
-  { id: "back-thigh-left", path: "M 112,310 L 148,310 L 143,370 L 108,370 Z", painLevel: 2, nameFr: "Arrière cuisse G", nameEn: "Left hamstring" },
-  { id: "back-thigh-right", path: "M 152,310 L 188,310 L 192,370 L 157,370 Z", painLevel: 2, nameFr: "Arrière cuisse D", nameEn: "Right hamstring" },
-  { id: "back-knee-left", path: "M 108,370 L 143,370 L 140,395 L 110,395 Z", painLevel: 4, nameFr: "Arrière genou G", nameEn: "Left back knee" },
-  { id: "back-knee-right", path: "M 157,370 L 192,370 L 190,395 L 160,395 Z", painLevel: 4, nameFr: "Arrière genou D", nameEn: "Right back knee" },
-  { id: "back-calf-left", path: "M 110,395 L 140,395 L 135,465 L 115,465 Z", painLevel: 2, nameFr: "Mollet arrière G", nameEn: "Left back calf" },
-  { id: "back-calf-right", path: "M 160,395 L 190,395 L 185,465 L 165,465 Z", painLevel: 2, nameFr: "Mollet arrière D", nameEn: "Right back calf" },
-  { id: "achilles-left", path: "M 118,465 L 132,465 L 130,490 L 120,490 Z", painLevel: 5, nameFr: "Tendon d'Achille G", nameEn: "Left Achilles" },
-  { id: "achilles-right", path: "M 168,465 L 182,465 L 180,490 L 170,490 Z", painLevel: 5, nameFr: "Tendon d'Achille D", nameEn: "Right Achilles" },
-  { id: "heel-left", path: "M 115,490 L 135,490 L 138,515 L 112,515 Z", painLevel: 5, nameFr: "Talon gauche", nameEn: "Left heel" },
-  { id: "heel-right", path: "M 165,490 L 185,490 L 188,515 L 162,515 Z", painLevel: 5, nameFr: "Talon droit", nameEn: "Right heel" },
+  // Head & Neck (3px gaps)
+  { id: "head-back", path: "M 150,28 Q 128,28 123,50 Q 118,77 129,93 Q 140,107 150,107 Q 160,107 171,93 Q 182,77 177,50 Q 172,28 150,28 Z", painLevel: 5, nameFr: "Arrière tête", nameEn: "Back of head" },
+  { id: "neck-back", path: "M 138,110 L 162,110 L 167,132 L 133,132 Z", painLevel: 5, nameFr: "Nuque", nameEn: "Nape" },
+
+  // Back (3px gaps, wider spine zones)
+  { id: "upper-back-left", path: "M 113,135 L 142,135 L 142,178 L 108,178 Z", painLevel: 2, nameFr: "Haut du dos G", nameEn: "Upper back left" },
+  { id: "upper-back-right", path: "M 158,135 L 187,135 L 192,178 L 158,178 Z", painLevel: 2, nameFr: "Haut du dos D", nameEn: "Upper back right" },
+  { id: "spine-upper", path: "M 145,135 L 155,135 L 155,198 L 145,198 Z", painLevel: 5, nameFr: "Colonne (haut)", nameEn: "Upper spine" },
+  { id: "mid-back-left", path: "M 108,181 L 142,181 L 142,228 L 113,228 Z", painLevel: 2, nameFr: "Milieu dos G", nameEn: "Mid back left" },
+  { id: "mid-back-right", path: "M 158,181 L 192,181 L 187,228 L 158,228 Z", painLevel: 2, nameFr: "Milieu dos D", nameEn: "Mid back right" },
+  { id: "spine-mid", path: "M 145,201 L 155,201 L 155,248 L 145,248 Z", painLevel: 5, nameFr: "Colonne (milieu)", nameEn: "Mid spine" },
+  { id: "lower-back-left", path: "M 118,231 L 142,231 L 142,268 L 123,268 Z", painLevel: 3, nameFr: "Bas du dos G", nameEn: "Lower back left" },
+  { id: "lower-back-right", path: "M 158,231 L 182,231 L 177,268 L 158,268 Z", painLevel: 3, nameFr: "Bas du dos D", nameEn: "Lower back right" },
+  { id: "spine-lower", path: "M 145,251 L 155,251 L 155,278 L 145,278 Z", painLevel: 5, nameFr: "Colonne (bas)", nameEn: "Lower spine" },
+
+  // Arms back view (moved 12px outward from body)
+  { id: "shoulder-back-left", path: "M 108,135 Q 82,142 75,158 L 93,158 L 108,142 Z", painLevel: 2, nameFr: "Épaule arrière G", nameEn: "Left back shoulder" },
+  { id: "shoulder-back-right", path: "M 192,135 Q 218,142 225,158 L 207,158 L 192,142 Z", painLevel: 2, nameFr: "Épaule arrière D", nameEn: "Right back shoulder" },
+  { id: "tricep-left", path: "M 75,161 L 98,161 L 93,208 L 70,208 Z", painLevel: 2, nameFr: "Triceps gauche", nameEn: "Left tricep" },
+  { id: "tricep-right", path: "M 202,161 L 225,161 L 230,208 L 207,208 Z", painLevel: 2, nameFr: "Triceps droit", nameEn: "Right tricep" },
+  { id: "back-elbow-left", path: "M 66,211 L 93,211 L 91,231 L 64,231 Z", painLevel: 5, nameFr: "Coude arrière G", nameEn: "Left back elbow" },
+  { id: "back-elbow-right", path: "M 207,211 L 234,211 L 236,231 L 209,231 Z", painLevel: 5, nameFr: "Coude arrière D", nameEn: "Right back elbow" },
+  { id: "back-forearm-left", path: "M 60,234 L 91,234 L 85,278 L 54,278 Z", painLevel: 2, nameFr: "Avant-bras arr. G", nameEn: "Left back forearm" },
+  { id: "back-forearm-right", path: "M 209,234 L 240,234 L 246,278 L 215,278 Z", painLevel: 2, nameFr: "Avant-bras arr. D", nameEn: "Right back forearm" },
+  { id: "back-wrist-left", path: "M 50,281 L 85,281 L 81,301 L 46,301 Z", painLevel: 4, nameFr: "Poignet arr. G", nameEn: "Left back wrist" },
+  { id: "back-wrist-right", path: "M 215,281 L 250,281 L 254,301 L 219,301 Z", painLevel: 4, nameFr: "Poignet arr. D", nameEn: "Right back wrist" },
+  { id: "back-hand-left", path: "M 42,304 L 81,304 L 77,345 L 38,345 Z", painLevel: 5, nameFr: "Main arr. G", nameEn: "Left back hand" },
+  { id: "back-hand-right", path: "M 219,304 L 258,304 L 262,345 L 223,345 Z", painLevel: 5, nameFr: "Main arr. D", nameEn: "Right back hand" },
+
+  // Glutes & Legs (3px gaps)
+  { id: "glute-left", path: "M 118,271 L 148,271 L 148,308 L 113,308 Z", painLevel: 1, nameFr: "Fesse gauche", nameEn: "Left glute" },
+  { id: "glute-right", path: "M 152,271 L 182,271 L 187,308 L 152,308 Z", painLevel: 1, nameFr: "Fesse droite", nameEn: "Right glute" },
+  { id: "back-thigh-left", path: "M 110,311 L 148,311 L 143,368 L 106,368 Z", painLevel: 2, nameFr: "Arrière cuisse G", nameEn: "Left hamstring" },
+  { id: "back-thigh-right", path: "M 152,311 L 190,311 L 194,368 L 157,368 Z", painLevel: 2, nameFr: "Arrière cuisse D", nameEn: "Right hamstring" },
+  { id: "back-knee-left", path: "M 106,371 L 143,371 L 140,396 L 108,396 Z", painLevel: 4, nameFr: "Arrière genou G", nameEn: "Left back knee" },
+  { id: "back-knee-right", path: "M 157,371 L 194,371 L 192,396 L 160,396 Z", painLevel: 4, nameFr: "Arrière genou D", nameEn: "Right back knee" },
+  { id: "back-calf-left", path: "M 108,399 L 140,399 L 135,458 L 113,458 Z", painLevel: 2, nameFr: "Mollet arrière G", nameEn: "Left back calf" },
+  { id: "back-calf-right", path: "M 160,399 L 192,399 L 187,458 L 165,458 Z", painLevel: 2, nameFr: "Mollet arrière D", nameEn: "Right back calf" },
+  { id: "achilles-left", path: "M 116,461 L 134,461 L 132,488 L 118,488 Z", painLevel: 5, nameFr: "Tendon d'Achille G", nameEn: "Left Achilles" },
+  { id: "achilles-right", path: "M 166,461 L 184,461 L 182,488 L 168,488 Z", painLevel: 5, nameFr: "Tendon d'Achille D", nameEn: "Right Achilles" },
+  { id: "heel-left", path: "M 113,491 L 137,491 L 140,515 L 110,515 Z", painLevel: 5, nameFr: "Talon gauche", nameEn: "Left heel" },
+  { id: "heel-right", path: "M 163,491 L 187,491 L 190,515 L 160,515 Z", painLevel: 5, nameFr: "Talon droit", nameEn: "Right heel" },
 ];
 
 function getPainColor(level: number): string {
@@ -131,19 +139,17 @@ function getPainLabel(level: number, language: string): string {
   return labels[language as keyof typeof labels]?.[level as keyof typeof labels.fr] || "";
 }
 
-function BodySVG({ 
-  zones, 
-  hoveredZone, 
+function BodySVG({
+  zones,
+  hoveredZone,
   setHoveredZone,
-  language 
-}: { 
-  zones: BodyZone[]; 
+}: {
+  zones: BodyZone[];
   hoveredZone: BodyZone | null;
   setHoveredZone: (zone: BodyZone | null) => void;
-  language: string;
 }) {
   return (
-    <svg viewBox="0 0 300 540" className="w-full h-full max-h-[500px]">
+    <svg viewBox="0 0 320 530" className="w-full h-full max-h-[500px]">
       {/* Body outline for context */}
       <defs>
         <filter id="glow">
@@ -206,7 +212,7 @@ export default function PainMap() {
   const zones = view === "front" ? bodyZonesFront : bodyZonesBack;
 
   return (
-    <section className="py-16 sm:py-20 bg-ink-800/50">
+    <section id="painmap" className="py-16 sm:py-20 bg-ink-800/50 scroll-mt-16">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
@@ -258,11 +264,10 @@ export default function PainMap() {
 
             {/* SVG Container */}
             <div className="bg-ink-900/50 rounded-2xl p-6 border border-ink-700">
-              <BodySVG 
-                zones={zones} 
-                hoveredZone={hoveredZone} 
+              <BodySVG
+                zones={zones}
+                hoveredZone={hoveredZone}
                 setHoveredZone={setHoveredZone}
-                language={language}
               />
             </div>
           </motion.div>
