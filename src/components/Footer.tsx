@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { FaInstagram, FaTiktok, FaFacebook, FaHeart, FaMapMarkerAlt } from "react-icons/fa";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -79,6 +80,22 @@ export default function Footer() {
                 >
                   Facebook
                 </a>
+              </li>
+              <li>
+                <Link
+                  href="/privacy"
+                  className="text-gray-400 hover:text-gold-400 transition-colors text-sm"
+                >
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/terms"
+                  className="text-gray-400 hover:text-gold-400 transition-colors text-sm"
+                >
+                  Terms of Service
+                </Link>
               </li>
             </ul>
           </div>

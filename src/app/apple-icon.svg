@@ -1,0 +1,25 @@
+<svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="180" height="180" rx="40" fill="#0a0a0a"/>
+
+  <!-- Stylized Tattoo Machine in Gold - Larger version -->
+  <!-- Top grip/handle -->
+  <path d="M90 30 L105 42 L105 65 L90 77 L75 65 L75 42 Z" fill="#d4af37" stroke="#f4d03f" stroke-width="2"/>
+
+  <!-- Machine body -->
+  <rect x="70" y="62" width="40" height="50" rx="5" fill="#d4af37" stroke="#f4d03f" stroke-width="2"/>
+
+  <!-- Needle tip -->
+  <path d="M82 112 L90 160 L98 112 Z" fill="#e5e7eb" stroke="#9ca3af" stroke-width="2"/>
+
+  <!-- Decorative elements (coils/springs) -->
+  <circle cx="80" cy="75" r="6" fill="#f4d03f"/>
+  <circle cx="100" cy="75" r="6" fill="#f4d03f"/>
+  <circle cx="80" cy="95" r="6" fill="#f4d03f"/>
+  <circle cx="100" cy="95" r="6" fill="#f4d03f"/>
+
+  <!-- Ink drops accent at bottom -->
+  <ellipse cx="90" cy="165" rx="12" ry="8" fill="#d4af37" opacity="0.8"/>
+  <ellipse cx="78" cy="170" rx="8" ry="6" fill="#d4af37" opacity="0.6"/>
+  <ellipse cx="102" cy="170" rx="8" ry="6" fill="#d4af37" opacity="0.6"/>
+</svg>
