@@ -6,13 +6,13 @@ import { isRestrictiveInAppBrowser } from "@/utils/browserDetection";
 
 const GoogleAnalytics = () => {
   const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
-  const [shouldLoad, setShouldLoad] = useState(true);
+  // Default to false to prevent server-rendering inline scripts that break Instagram's CSP
+  const [shouldLoad, setShouldLoad] = useState(false);
 
   useEffect(() => {
-    // Don't load analytics in restrictive in-app browsers (Instagram, Facebook, etc.)
-    // to prevent CSP violations that cause white screens
-    if (isRestrictiveInAppBrowser()) {
-      setShouldLoad(false);
+    // Only load analytics in non-restrictive browsers (not Instagram, Facebook, etc.)
+    if (!isRestrictiveInAppBrowser()) {
+      setShouldLoad(true);
     }
   }, []);
 

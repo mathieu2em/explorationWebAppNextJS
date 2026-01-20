@@ -5,13 +5,13 @@ import { useEffect, useState } from "react";
 import { isRestrictiveInAppBrowser } from "@/utils/browserDetection";
 
 const MicrosoftClarity = () => {
-  const [shouldLoad, setShouldLoad] = useState(true);
+  // Default to false to prevent server-rendering inline scripts that break Instagram's CSP
+  const [shouldLoad, setShouldLoad] = useState(false);
 
   useEffect(() => {
-    // Don't load Clarity in restrictive in-app browsers (Instagram, Facebook, etc.)
-    // to prevent CSP violations that cause white screens
-    if (isRestrictiveInAppBrowser()) {
-      setShouldLoad(false);
+    // Only load Clarity in non-restrictive browsers (not Instagram, Facebook, etc.)
+    if (!isRestrictiveInAppBrowser()) {
+      setShouldLoad(true);
     }
   }, []);
 
