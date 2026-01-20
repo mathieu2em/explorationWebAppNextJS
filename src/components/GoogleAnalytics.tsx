@@ -1,9 +1,22 @@
+"use client";
+
 import Script from "next/script";
+import { useEffect, useState } from "react";
+import { isRestrictiveInAppBrowser } from "@/utils/browserDetection";
 
 const GoogleAnalytics = () => {
   const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+  const [shouldLoad, setShouldLoad] = useState(true);
 
-  if (!GA_MEASUREMENT_ID) {
+  useEffect(() => {
+    // Don't load analytics in restrictive in-app browsers (Instagram, Facebook, etc.)
+    // to prevent CSP violations that cause white screens
+    if (isRestrictiveInAppBrowser()) {
+      setShouldLoad(false);
+    }
+  }, []);
+
+  if (!GA_MEASUREMENT_ID || !shouldLoad) {
     return null;
   }
 

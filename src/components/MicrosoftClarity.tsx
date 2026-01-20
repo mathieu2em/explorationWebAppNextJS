@@ -1,6 +1,24 @@
+"use client";
+
 import Script from "next/script";
+import { useEffect, useState } from "react";
+import { isRestrictiveInAppBrowser } from "@/utils/browserDetection";
 
 const MicrosoftClarity = () => {
+  const [shouldLoad, setShouldLoad] = useState(true);
+
+  useEffect(() => {
+    // Don't load Clarity in restrictive in-app browsers (Instagram, Facebook, etc.)
+    // to prevent CSP violations that cause white screens
+    if (isRestrictiveInAppBrowser()) {
+      setShouldLoad(false);
+    }
+  }, []);
+
+  if (!shouldLoad) {
+    return null;
+  }
+
   return (
     <Script
       id="microsoft-clarity"
