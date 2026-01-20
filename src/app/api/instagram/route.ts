@@ -61,7 +61,8 @@ export async function GET() {
     }
 
     // Appeler l'API Instagram Graph (avec Instagram Login)
-    const fields = "id,caption,media_type,media_url,thumbnail_url,permalink,timestamp";
+    // Note: like_count et comments_count nécessitent un compte Business/Creator
+    const fields = "id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,like_count,comments_count";
     const limit = 12; // Nombre de posts à récupérer
 
     const response = await fetch(
