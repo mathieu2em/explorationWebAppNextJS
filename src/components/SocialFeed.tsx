@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { FaInstagram, FaTiktok, FaFacebook, FaHeart, FaComment, FaPlay } from "react-icons/fa";
+import { FaInstagram, FaTiktok, FaFacebook, FaHeart, FaComment } from "react-icons/fa";
 import { useLanguage } from "@/context/LanguageContext";
 import { useSocialPosts, SocialPost } from "@/hooks/useSocialPosts";
 
@@ -98,14 +98,11 @@ function PostCard({ post, index, viewOnText }: { post: SocialPost; index: number
 }
 
 export default function SocialFeed() {
-  const [filter, setFilter] = useState<"all" | "instagram" | "tiktok">("all");
   const { t } = useLanguage();
   const { posts, loading, isUsingFallback } = useSocialPosts();
 
-  const filteredPosts = posts.filter((post) => {
-    if (filter === "all") return true;
-    return post.platform === filter;
-  });
+  // Only show Instagram posts
+  const filteredPosts = posts.filter((post) => post.platform === "instagram");
 
   return (
     <section id="work" className="py-20 md:py-32 bg-ink-800 scroll-mt-20">
@@ -141,49 +138,6 @@ export default function SocialFeed() {
 
         {!loading && (
           <>
-            {/* Filter tabs */}
-            <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          viewport={{ once: true }}
-          className="flex flex-wrap justify-center gap-2 sm:gap-4 mb-10 px-2"
-        >
-          <button
-            onClick={() => setFilter("all")}
-            className={`px-4 sm:px-6 py-2 rounded-full text-sm sm:text-base font-medium transition-all ${
-              filter === "all"
-                ? "bg-gold-400 text-ink-900"
-                : "bg-ink-700 text-gray-300 hover:bg-ink-600"
-            }`}
-          >
-            {t("social.all")}
-          </button>
-          <button
-            onClick={() => setFilter("instagram")}
-            className={`px-4 sm:px-6 py-2 rounded-full text-sm sm:text-base font-medium transition-all flex items-center gap-1 sm:gap-2 ${
-              filter === "instagram"
-                ? "bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 text-white"
-                : "bg-ink-700 text-gray-300 hover:bg-ink-600"
-            }`}
-          >
-            <FaInstagram size={16} />
-            <span className="hidden xs:inline">Instagram</span>
-            <span className="xs:hidden">IG</span>
-          </button>
-          <button
-            onClick={() => setFilter("tiktok")}
-            className={`px-4 sm:px-6 py-2 rounded-full text-sm sm:text-base font-medium transition-all flex items-center gap-1 sm:gap-2 ${
-              filter === "tiktok"
-                ? "bg-black text-white border border-gray-600"
-                : "bg-ink-700 text-gray-300 hover:bg-ink-600"
-            }`}
-          >
-            <FaTiktok size={14} />
-            <span className="hidden xs:inline">TikTok</span>
-            <span className="xs:hidden">TT</span>
-          </button>
-        </motion.div>
 
         {/* Posts grid */}
         <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-4 md:gap-6">
