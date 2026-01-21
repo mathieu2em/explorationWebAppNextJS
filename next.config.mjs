@@ -5,6 +5,7 @@ const nextConfig = {
       "images.unsplash.com",
       "scontent.cdninstagram.com",
       "p16-sign.tiktokcdn-us.com",
+      "cdn.sanity.io",
     ],
     unoptimized: true,
   },

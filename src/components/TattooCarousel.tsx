@@ -5,10 +5,13 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FaTimes } from "react-icons/fa";
 import Image from "next/image";
 import { useLanguage } from "@/context/LanguageContext";
+import { client } from "../../sanity/lib/client";
+import { TATTOOS_QUERY, type Tattoo } from "../../sanity/lib/queries";
+import { urlFor } from "../../sanity/lib/image";
 
-// 🎨 CONFIGURATION DE LA GALERIE
-// Ajoute ou retire des images facilement ici
-const tattooImages = [
+// 🎨 FALLBACK DATA - Used if Sanity is not configured yet
+// Once Sanity is set up, data will be fetched from CMS
+const fallbackTattooImages = [
   {
     src: "/tattoos/epinette-noire-avant-bras.jpeg",
     alt: "Épinette Noire",
@@ -132,6 +135,37 @@ export default function TattooCarousel() {
   const [selectedAlt, setSelectedAlt] = useState<string>("");
   const [showAll, setShowAll] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [tattoos, setTattoos] = useState<Array<{ src: string; alt: string; size: string }>>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Fetch tattoos from Sanity
+  useEffect(() => {
+    async function fetchTattoos() {
+      try {
+        const sanityTattoos = await client.fetch<Tattoo[]>(TATTOOS_QUERY);
+
+        if (sanityTattoos && sanityTattoos.length > 0) {
+          // Convert Sanity data to component format
+          const formattedTattoos = sanityTattoos.map((tattoo) => ({
+            src: urlFor(tattoo.image).url(),
+            alt: tattoo.alt,
+            size: tattoo.size,
+          }));
+          setTattoos(formattedTattoos);
+        } else {
+          // Use fallback data if no Sanity content
+          setTattoos(fallbackTattooImages);
+        }
+      } catch (error) {
+        console.log("Sanity not configured yet, using fallback data");
+        setTattoos(fallbackTattooImages);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchTattoos();
+  }, []);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -142,7 +176,15 @@ export default function TattooCarousel() {
 
   // 13 sur desktop (4 colonnes), 14 sur mobile (2 colonnes = pair)
   const INITIAL_DISPLAY_COUNT = isMobile ? 14 : 13;
-  const displayedImages = showAll ? tattooImages : tattooImages.slice(0, INITIAL_DISPLAY_COUNT);
+  const displayedImages = showAll ? tattoos : tattoos.slice(0, INITIAL_DISPLAY_COUNT);
+
+  if (isLoading) {
+    return (
+      <div className="w-full max-w-6xl mx-auto px-4 py-12 text-center">
+        <p className="text-gold-400">Loading gallery...</p>
+      </div>
+    );
+  }
 
   const getSizeClass = (size: string) => {
     switch (size) {
@@ -199,7 +241,7 @@ export default function TattooCarousel() {
         </div>
 
         {/* Bouton Voir plus / Voir moins */}
-        {tattooImages.length > INITIAL_DISPLAY_COUNT && (
+        {tattoos.length > INITIAL_DISPLAY_COUNT && (
           <div className="flex justify-center mt-8">
             <motion.button
               whileHover={{ scale: 1.05 }}
@@ -207,9 +249,9 @@ export default function TattooCarousel() {
               onClick={() => setShowAll(!showAll)}
               className="px-8 py-3 bg-gold-400/10 border-2 border-gold-400/30 text-gold-400 font-semibold rounded-lg hover:bg-gold-400/20 hover:border-gold-400/50 transition-all"
             >
-              {showAll 
+              {showAll
                 ? t("gallery.viewLess")
-                : `${t("gallery.viewMore")} (${tattooImages.length - INITIAL_DISPLAY_COUNT} ${t("gallery.moreCount")})`
+                : `${t("gallery.viewMore")} (${tattoos.length - INITIAL_DISPLAY_COUNT} ${t("gallery.moreCount")})`
               }
             </motion.button>
           </div>
