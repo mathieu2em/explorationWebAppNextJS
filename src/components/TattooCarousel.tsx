@@ -518,8 +518,23 @@ export default function TattooCarousel() {
                     const bgPosX = (magnifierSize / 2) - zoomedPointX;
                     const bgPosY = (magnifierSize / 2) - zoomedPointY;
 
-                    // Position magnifier above finger on mobile
-                    const magnifierOffset = isMobile ? magnifierSize + 30 : 0;
+                    // Position magnifier - check if it would be clipped at top on mobile
+                    let magnifierOffset = 0;
+                    let arrowPosition: 'top' | 'bottom' = 'top';
+
+                    if (isMobile) {
+                      const magnifierWithOffsetTop = magnifierPos.y - magnifierSize / 2 - (magnifierSize + 30);
+
+                      // If magnifier would be clipped at top, position it below finger instead
+                      if (magnifierWithOffsetTop < 0) {
+                        magnifierOffset = -(magnifierSize + 30); // Position below
+                        arrowPosition = 'bottom';
+                      } else {
+                        magnifierOffset = magnifierSize + 30; // Position above
+                        arrowPosition = 'top';
+                      }
+                    }
+
                     const magnifierLeft = magnifierPos.x - magnifierSize / 2;
                     const magnifierTop = magnifierPos.y - magnifierSize / 2 - magnifierOffset;
 
@@ -542,7 +557,11 @@ export default function TattooCarousel() {
                       >
                         {/* Pointer indicator for mobile */}
                         {isMobile && (
-                          <div className="absolute left-1/2 -translate-x-1/2 -bottom-8 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-gold-400" />
+                          arrowPosition === 'top' ? (
+                            <div className="absolute left-1/2 -translate-x-1/2 -bottom-8 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-gold-400" />
+                          ) : (
+                            <div className="absolute left-1/2 -translate-x-1/2 -top-8 w-0 h-0 border-l-8 border-r-8 border-b-8 border-l-transparent border-r-transparent border-b-gold-400" />
+                          )
                         )}
                       </div>
                     );

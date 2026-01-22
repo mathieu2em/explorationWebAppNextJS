@@ -108,6 +108,8 @@ const translations: Record<Language, Record<string, string>> = {
     "gallery.viewMore": "Voir plus",
     "gallery.viewLess": "Voir moins",
     "gallery.moreCount": "de plus",
+    "gallery.magnifier.desktop": "Survolez une image avec votre souris pour voir les détails 🔍",
+    "gallery.magnifier.mobile": "Maintenez votre doigt sur une image pour voir les détails 🔍",
 
     // Legal
     "legal.lastUpdated": "Dernière mise à jour",
@@ -210,6 +212,8 @@ const translations: Record<Language, Record<string, string>> = {
     "gallery.viewMore": "View more",
     "gallery.viewLess": "View less",
     "gallery.moreCount": "more",
+    "gallery.magnifier.desktop": "Hover over an image with your mouse to see details 🔍",
+    "gallery.magnifier.mobile": "Hold your finger on an image to see details 🔍",
 
     // Legal
     "legal.lastUpdated": "Last Updated",
