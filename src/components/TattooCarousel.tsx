@@ -473,9 +473,9 @@ export default function TattooCarousel() {
               </div>
 
               {/* Image agrandie avec loupe */}
-              <div className="relative max-h-[70vh] flex items-center justify-center bg-ink-900/50 rounded-lg border-2 border-gold-500/30 p-4 overflow-visible">
+              <div className="relative max-h-[70vh] flex items-center justify-center bg-ink-900/50 rounded-lg border-2 border-gold-500/30 p-4 overflow-visible select-none">
                 <div
-                  className="magnifier-container relative w-full h-[65vh] cursor-crosshair overflow-hidden rounded-lg"
+                  className="magnifier-container relative w-full h-[65vh] cursor-crosshair overflow-hidden rounded-lg select-none"
                   onMouseMove={handleModalMouseMove}
                   onMouseLeave={handleModalMouseLeave}
                   onMouseEnter={(e) => {
@@ -486,7 +486,12 @@ export default function TattooCarousel() {
                   onTouchStart={handleModalTouchStart}
                   onTouchMove={handleModalTouchMove}
                   onTouchEnd={handleModalTouchEnd}
-                  style={{ touchAction: magnifierActive === 1 ? 'none' : 'auto' }}
+                  style={{
+                    touchAction: magnifierActive === 1 ? 'none' : 'auto',
+                    WebkitUserSelect: 'none',
+                    WebkitTouchCallout: 'none',
+                    userSelect: 'none'
+                  }}
                   ref={(el) => {
                     if (el && selectedImage && !imageRect.width) {
                       // Calculate on mount with a small delay to ensure image is rendered
@@ -499,9 +504,10 @@ export default function TattooCarousel() {
                     alt={selectedTitle}
                     fill
                     sizes="(max-width: 768px) 90vw, 60vw"
-                    className="object-contain rounded-lg"
+                    className="object-contain rounded-lg select-none pointer-events-none"
                     quality={85}
                     priority
+                    draggable={false}
                   />
 
                   {/* Magnifying Glass in Modal */}
@@ -518,23 +524,9 @@ export default function TattooCarousel() {
                     const bgPosX = (magnifierSize / 2) - zoomedPointX;
                     const bgPosY = (magnifierSize / 2) - zoomedPointY;
 
-                    // Position magnifier - check if it would be clipped at top on mobile
-                    let magnifierOffset = 0;
-                    let arrowPosition: 'top' | 'bottom' = 'top';
-
-                    if (isMobile) {
-                      const magnifierWithOffsetTop = magnifierPos.y - magnifierSize / 2 - (magnifierSize + 30);
-
-                      // If magnifier would be clipped at top, position it below finger instead
-                      if (magnifierWithOffsetTop < 0) {
-                        magnifierOffset = -(magnifierSize + 30); // Position below
-                        arrowPosition = 'bottom';
-                      } else {
-                        magnifierOffset = magnifierSize + 30; // Position above
-                        arrowPosition = 'top';
-                      }
-                    }
-
+                    // Position magnifier - always above finger on mobile
+                    const fingerOffset = 15; // Small gap between finger and magnifier
+                    const magnifierOffset = isMobile ? magnifierSize / 2 + fingerOffset : 0;
                     const magnifierLeft = magnifierPos.x - magnifierSize / 2;
                     const magnifierTop = magnifierPos.y - magnifierSize / 2 - magnifierOffset;
 
@@ -557,11 +549,7 @@ export default function TattooCarousel() {
                       >
                         {/* Pointer indicator for mobile */}
                         {isMobile && (
-                          arrowPosition === 'top' ? (
-                            <div className="absolute left-1/2 -translate-x-1/2 -bottom-8 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-gold-400" />
-                          ) : (
-                            <div className="absolute left-1/2 -translate-x-1/2 -top-8 w-0 h-0 border-l-8 border-r-8 border-b-8 border-l-transparent border-r-transparent border-b-gold-400" />
-                          )
+                          <div className="absolute left-1/2 -translate-x-1/2 -bottom-4 w-0 h-0 border-l-6 border-r-6 border-t-6 border-l-transparent border-r-transparent border-t-gold-400" />
                         )}
                       </div>
                     );
