@@ -162,6 +162,13 @@ export default function TattooCarousel() {
   const [tattoos, setTattoos] = useState<Array<{ src: string; title: string; alt: string; size: string }>>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Magnifying glass state
+  const [magnifierActive, setMagnifierActive] = useState<number | null>(null);
+  const [magnifierPos, setMagnifierPos] = useState({ x: 0, y: 0 });
+  const [magnifierSize] = useState(isMobile ? 120 : 180); // Size of the magnifier circle
+  const [zoomLevel] = useState(isMobile ? 2 : 3); // Zoom level for magnification
+  const [imageRect, setImageRect] = useState({ width: 0, height: 0, offsetX: 0, offsetY: 0 });
+
   // Fetch tattoos from Sanity
   useEffect(() => {
     async function fetchTattoos() {
@@ -198,6 +205,155 @@ export default function TattooCarousel() {
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
+
+  // Prevent body scroll when modal with magnifier is active
+  useEffect(() => {
+    if (selectedImage && magnifierActive) {
+      document.body.style.overflow = "hidden";
+      document.body.style.touchAction = "none";
+    } else if (selectedImage) {
+      document.body.style.overflow = "hidden";
+      document.body.style.touchAction = "auto";
+    } else {
+      document.body.style.overflow = "auto";
+      document.body.style.touchAction = "auto";
+    }
+
+    return () => {
+      document.body.style.overflow = "auto";
+      document.body.style.touchAction = "auto";
+    };
+  }, [selectedImage, magnifierActive]);
+
+  // Reset imageRect when selected image changes
+  useEffect(() => {
+    if (selectedImage) {
+      setImageRect({ width: 0, height: 0, offsetX: 0, offsetY: 0 });
+    }
+  }, [selectedImage]);
+
+  // Calculate actual image dimensions and offset for object-contain
+  const calculateImageRect = (containerEl: HTMLDivElement) => {
+    if (!selectedImage) return;
+
+    // Find the actual img element inside the container
+    const imgElement = containerEl.querySelector('img');
+    if (!imgElement) return;
+
+    // Wait for image to load
+    if (!imgElement.complete) {
+      imgElement.onload = () => calculateImageRect(containerEl);
+      return;
+    }
+
+    const containerRect = containerEl.getBoundingClientRect();
+    const containerWidth = containerRect.width;
+    const containerHeight = containerRect.height;
+
+    const naturalWidth = imgElement.naturalWidth;
+    const naturalHeight = imgElement.naturalHeight;
+
+    if (!naturalWidth || !naturalHeight) return;
+
+    const imgAspect = naturalWidth / naturalHeight;
+    const containerAspect = containerWidth / containerHeight;
+
+    let renderWidth, renderHeight, offsetX, offsetY;
+
+    if (imgAspect > containerAspect) {
+      // Image is wider - fit to width
+      renderWidth = containerWidth;
+      renderHeight = containerWidth / imgAspect;
+      offsetX = 0;
+      offsetY = (containerHeight - renderHeight) / 2;
+    } else {
+      // Image is taller - fit to height
+      renderHeight = containerHeight;
+      renderWidth = containerHeight * imgAspect;
+      offsetX = (containerWidth - renderWidth) / 2;
+      offsetY = 0;
+    }
+
+    setImageRect({ width: renderWidth, height: renderHeight, offsetX, offsetY });
+  };
+
+  // Handle magnifier movement in modal
+  const handleModalMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isMobile) {
+      const containerEl = e.currentTarget;
+      if (!imageRect.width) {
+        calculateImageRect(containerEl);
+        // Wait for next frame to ensure imageRect is updated
+        requestAnimationFrame(() => {
+          const rect = containerEl.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          setMagnifierPos({ x, y });
+          setMagnifierActive(1);
+        });
+        return;
+      }
+      const rect = containerEl.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      setMagnifierPos({ x, y });
+      setMagnifierActive(1);
+    }
+  };
+
+  const handleModalMouseLeave = () => {
+    if (!isMobile) {
+      setMagnifierActive(null);
+    }
+  };
+
+  // Handle touch-based magnifier for mobile in modal
+  const handleModalTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (isMobile) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const touch = e.touches[0];
+      const x = touch.clientX - rect.left;
+      const y = touch.clientY - rect.top;
+      setMagnifierPos({ x, y });
+      setMagnifierActive(1);
+    }
+  };
+
+  const handleModalTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (isMobile) {
+      setMagnifierActive(1);
+      calculateImageRect(e.currentTarget);
+    }
+  };
+
+  const handleModalTouchEnd = () => {
+    if (isMobile) {
+      setMagnifierActive(null);
+    }
+  };
+
+  // Add non-passive touch event listeners to prevent scroll
+  useEffect(() => {
+    if (!selectedImage) return;
+
+    const modalImageElement = document.querySelector('.magnifier-container');
+    if (!modalImageElement) return;
+
+    const preventDefaultTouch = (e: Event) => {
+      if (magnifierActive === 1) {
+        e.preventDefault();
+      }
+    };
+
+    modalImageElement.addEventListener('touchstart', preventDefaultTouch, { passive: false });
+    modalImageElement.addEventListener('touchmove', preventDefaultTouch, { passive: false });
+
+    return () => {
+      modalImageElement.removeEventListener('touchstart', preventDefaultTouch);
+      modalImageElement.removeEventListener('touchmove', preventDefaultTouch);
+    };
+  }, [selectedImage, magnifierActive]);
 
   // 13 sur desktop (4 colonnes), 14 sur mobile (2 colonnes = pair)
   const INITIAL_DISPLAY_COUNT = isMobile ? 14 : 13;
@@ -252,14 +408,14 @@ export default function TattooCarousel() {
                 quality={75}
                 loading="lazy"
               />
-              
+
               {/* Overlay au hover */}
               <div className="absolute inset-0 bg-gradient-to-t from-ink-900/80 via-ink-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <div className="absolute bottom-0 left-0 right-0 p-4">
                   <p className="text-gold-400 font-semibold text-sm md:text-base">{image.title}</p>
                 </div>
               </div>
-              
+
               {/* Bordure dorée au hover */}
               <div className="absolute inset-0 border-2 border-gold-500/0 group-hover:border-gold-500/50 transition-all duration-300 rounded-lg" />
             </motion.div>
@@ -298,7 +454,7 @@ export default function TattooCarousel() {
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.8, opacity: 0 }}
-              className="relative max-w-3xl max-h-[80vh] w-full"
+              className="relative max-w-3xl max-h-[80vh] w-full z-50"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Bouton fermer */}
@@ -309,9 +465,35 @@ export default function TattooCarousel() {
                 <FaTimes size={24} />
               </button>
 
-              {/* Image agrandie */}
-              <div className="relative max-h-[70vh] flex items-center justify-center bg-ink-900/50 rounded-lg border-2 border-gold-500/30 p-4">
-                <div className="relative w-full h-[65vh]">
+              {/* Instructions pour la loupe */}
+              <div className="text-center mb-3 text-gold-400/60 text-xs md:text-sm">
+                {isMobile
+                  ? t("gallery.magnifier.mobile")
+                  : t("gallery.magnifier.desktop")}
+              </div>
+
+              {/* Image agrandie avec loupe */}
+              <div className="relative max-h-[70vh] flex items-center justify-center bg-ink-900/50 rounded-lg border-2 border-gold-500/30 p-4 overflow-visible">
+                <div
+                  className="magnifier-container relative w-full h-[65vh] cursor-crosshair overflow-hidden rounded-lg"
+                  onMouseMove={handleModalMouseMove}
+                  onMouseLeave={handleModalMouseLeave}
+                  onMouseEnter={(e) => {
+                    if (!isMobile && !imageRect.width) {
+                      calculateImageRect(e.currentTarget);
+                    }
+                  }}
+                  onTouchStart={handleModalTouchStart}
+                  onTouchMove={handleModalTouchMove}
+                  onTouchEnd={handleModalTouchEnd}
+                  style={{ touchAction: magnifierActive === 1 ? 'none' : 'auto' }}
+                  ref={(el) => {
+                    if (el && selectedImage && !imageRect.width) {
+                      // Calculate on mount with a small delay to ensure image is rendered
+                      setTimeout(() => calculateImageRect(el), 100);
+                    }
+                  }}
+                >
                   <Image
                     src={selectedImage}
                     alt={selectedTitle}
@@ -321,6 +503,50 @@ export default function TattooCarousel() {
                     quality={85}
                     priority
                   />
+
+                  {/* Magnifying Glass in Modal */}
+                  {magnifierActive === 1 && imageRect.width > 0 && (() => {
+                    // Calculate position relative to the actual image (not container)
+                    const relativeX = magnifierPos.x - imageRect.offsetX;
+                    const relativeY = magnifierPos.y - imageRect.offsetY;
+
+                    // The point in the zoomed image that should be at the center of the magnifier
+                    const zoomedPointX = relativeX * zoomLevel;
+                    const zoomedPointY = relativeY * zoomLevel;
+
+                    // Background position to center that point in the magnifier
+                    const bgPosX = (magnifierSize / 2) - zoomedPointX;
+                    const bgPosY = (magnifierSize / 2) - zoomedPointY;
+
+                    // Position magnifier above finger on mobile
+                    const magnifierOffset = isMobile ? magnifierSize + 30 : 0;
+                    const magnifierLeft = magnifierPos.x - magnifierSize / 2;
+                    const magnifierTop = magnifierPos.y - magnifierSize / 2 - magnifierOffset;
+
+                    return (
+                      <div
+                        className="absolute pointer-events-none border-4 border-gold-400 rounded-full shadow-2xl bg-ink-900"
+                        style={{
+                          width: `${magnifierSize}px`,
+                          height: `${magnifierSize}px`,
+                          left: `${magnifierLeft}px`,
+                          top: `${magnifierTop}px`,
+                          backgroundImage: `url(${selectedImage})`,
+                          backgroundRepeat: "no-repeat",
+                          backgroundSize: `${imageRect.width * zoomLevel}px ${imageRect.height * zoomLevel}px`,
+                          backgroundPosition: `${bgPosX}px ${bgPosY}px`,
+                          boxShadow:
+                            "0 0 20px rgba(212, 175, 55, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.5)",
+                          zIndex: 9999,
+                        }}
+                      >
+                        {/* Pointer indicator for mobile */}
+                        {isMobile && (
+                          <div className="absolute left-1/2 -translate-x-1/2 -bottom-8 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-gold-400" />
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
 
