@@ -9,6 +9,15 @@ import { client } from "../../sanity/lib/client";
 import { TATTOOS_QUERY, type Tattoo } from "../../sanity/lib/queries";
 import { urlFor } from "../../sanity/lib/image";
 
+const newTattooImages = [
+  {
+    src: "/tattoos/portrait-feminin-floral-mollet.jpg",
+    title: "Portrait Féminin Floral",
+    alt: "Tatouage noir et gris représentant un portrait féminin floral sur le mollet",
+    size: "medium",
+  },
+];
+
 // 🎨 FALLBACK DATA - Used if Sanity is not configured yet
 // Once Sanity is set up, data will be fetched from CMS
 const fallbackTattooImages = [
@@ -183,14 +192,14 @@ export default function TattooCarousel() {
             alt: tattoo.alt,
             size: tattoo.size,
           }));
-          setTattoos(formattedTattoos);
+          setTattoos([...newTattooImages, ...formattedTattoos]);
         } else {
           // Use fallback data if no Sanity content
-          setTattoos(fallbackTattooImages);
+          setTattoos([...newTattooImages, ...fallbackTattooImages]);
         }
       } catch (error) {
         console.log("Sanity not configured yet, using fallback data");
-        setTattoos(fallbackTattooImages);
+        setTattoos([...newTattooImages, ...fallbackTattooImages]);
       } finally {
         setIsLoading(false);
       }
