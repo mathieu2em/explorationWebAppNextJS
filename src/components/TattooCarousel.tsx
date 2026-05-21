@@ -11,6 +11,12 @@ import { urlFor } from "../../sanity/lib/image";
 
 const newTattooImages = [
   {
+    src: "/tattoos/brushstroke-rouge-noir-main.jpg",
+    title: "Brushstroke Rouge et Noir",
+    alt: "Tatouage abstrait style coups de pinceau rouge et noir sur le dessus de la main",
+    size: "medium",
+  },
+  {
     src: "/tattoos/portrait-feminin-floral-mollet.jpg",
     title: "Portrait Féminin Floral",
     alt: "Tatouage noir et gris représentant un portrait féminin floral sur le mollet",
