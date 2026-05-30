@@ -14,6 +14,7 @@ import {
   FaRulerCombined,
 } from "react-icons/fa";
 import { useLanguage } from "@/context/LanguageContext";
+import BodyPlacementPicker from "@/components/BodyPlacementPicker";
 
 interface FormData {
   name: string;
@@ -131,7 +132,6 @@ export default function ContactForm() {
     if (language === "en") {
       return {
         tattooStyle: ["Blackwork", "Geometric", "Fine line", "Realistic", "Lettering", "Not sure"],
-        placement: ["Forearm", "Arm", "Leg", "Back", "Chest", "Ribs", "Hand", "Not sure"],
         size: ["Small", "Medium", "Large", "Sleeve / big project", "Not sure"],
         budget: ["Under $300", "$300 to $600", "$600 to $1000", "$1000+", "Let's discuss"],
         availability: ["Weeknights", "Weekend", "Flexible", "After 7pm", "Specific dates"],
@@ -140,7 +140,6 @@ export default function ContactForm() {
 
     return {
       tattooStyle: ["Blackwork", "Géométrique", "Fine line", "Réaliste", "Lettrage", "Pas sûr"],
-      placement: ["Avant-bras", "Bras", "Jambe", "Dos", "Torse", "Côtes", "Main", "Pas sûr"],
       size: ["Petit", "Moyen", "Grand", "Manchette / gros projet", "Pas sûr"],
       budget: ["Moins de 300$", "300$ à 600$", "600$ à 1000$", "1000$+", "À discuter"],
       availability: ["Soirs de semaine", "Weekend", "Flexible", "Après 19h", "Dates précises"],
@@ -384,18 +383,15 @@ export default function ContactForm() {
                             <p className="text-sm font-medium text-gray-300 mb-3">{copy.size}</p>
                             <ChipGroup field="size" items={options.size} />
                           </div>
-                          <div>
+                          <div className="md:col-span-2">
                             <p className="text-sm font-medium text-gray-300 mb-3">{copy.placement}</p>
-                            <ChipGroup field="placement" items={options.placement} />
-                            <input
-                              type="text"
+                            <BodyPlacementPicker
                               value={formData.placement}
-                              onChange={(event) => updateField("placement", event.target.value)}
-                              className="mt-3 w-full rounded-2xl border border-ink-600 bg-ink-900/60 px-4 py-3 text-white placeholder-gray-500 outline-none transition-all focus:border-gold-400 focus:ring-4 focus:ring-gold-400/10"
-                              placeholder={copy.customPlacement}
+                              onChange={(value) => updateField("placement", value)}
+                              customPlaceholder={copy.customPlacement}
                             />
                           </div>
-                          <div>
+                          <div className="md:col-span-2">
                             <p className="text-sm font-medium text-gray-300 mb-3">{copy.budget}</p>
                             <ChipGroup field="budget" items={options.budget} />
                           </div>
