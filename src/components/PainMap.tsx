@@ -6,7 +6,7 @@ import Link from "next/link";
 import { FiZap } from "react-icons/fi";
 import { useLanguage } from "@/context/LanguageContext";
 
-export interface BodyZone {
+interface BodyZone {
   id: string;
   path: string;
   painLevel: number; // 1-5 (1 = low pain, 5 = extreme pain)
@@ -16,7 +16,7 @@ export interface BodyZone {
 
 // Pain levels: 1 = très supportable, 5 = très douloureux
 // Spacing: 3px gaps between zones for better mobile touch targets
-export const bodyZonesFront: BodyZone[] = [
+const bodyZonesFront: BodyZone[] = [
   // Head & Neck (3px gap below head)
   { id: "head", path: "M 150,28 Q 128,28 123,50 Q 118,77 129,93 Q 140,107 150,107 Q 160,107 171,93 Q 182,77 177,50 Q 172,28 150,28 Z", painLevel: 5, nameFr: "Tête", nameEn: "Head" },
   { id: "neck-front", path: "M 138,110 L 162,110 L 167,132 L 133,132 Z", painLevel: 5, nameFr: "Cou", nameEn: "Neck" },
@@ -65,7 +65,7 @@ export const bodyZonesFront: BodyZone[] = [
   { id: "foot-right", path: "M 160,484 L 192,484 L 197,515 L 155,515 Z", painLevel: 5, nameFr: "Pied droit", nameEn: "Right foot" },
 ];
 
-export const bodyZonesBack: BodyZone[] = [
+const bodyZonesBack: BodyZone[] = [
   // Head & Neck (3px gaps)
   { id: "head-back", path: "M 150,28 Q 128,28 123,50 Q 118,77 129,93 Q 140,107 150,107 Q 160,107 171,93 Q 182,77 177,50 Q 172,28 150,28 Z", painLevel: 5, nameFr: "Arrière tête", nameEn: "Back of head" },
   { id: "neck-back", path: "M 138,110 L 162,110 L 167,132 L 133,132 Z", painLevel: 5, nameFr: "Nuque", nameEn: "Nape" },
