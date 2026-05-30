@@ -3,15 +3,13 @@
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  FaBolt,
+  FaArrowLeft,
+  FaArrowRight,
   FaCheck,
-  FaChevronDown,
   FaExclamationCircle,
-  FaInstagram,
   FaPaperPlane,
   FaPhoneAlt,
-  FaRegClock,
-  FaRulerCombined,
+  FaRedo,
 } from "react-icons/fa";
 import { useLanguage } from "@/context/LanguageContext";
 
@@ -28,7 +26,19 @@ interface FormData {
   availability: string;
 }
 
-type FieldKey = keyof FormData;
+type QuestionType = "text" | "email" | "tel" | "textarea" | "options";
+
+type Question = {
+  id: keyof FormData;
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  placeholder?: string;
+  type: QuestionType;
+  required?: boolean;
+  options?: string[];
+  helper?: string;
+};
 
 const emptyForm: FormData = {
   name: "",
@@ -43,119 +53,296 @@ const emptyForm: FormData = {
   availability: "",
 };
 
-function mergeValue(current: string, value: string) {
-  if (!current) return value;
-  if (current === value) return "";
-  return value;
-}
-
 export default function ContactForm() {
   const { language, t } = useLanguage();
   const [formData, setFormData] = useState<FormData>(emptyForm);
+  const [step, setStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
-  const [showExtras, setShowExtras] = useState(false);
-  const [callbackMode, setCallbackMode] = useState(false);
+  const [mode, setMode] = useState<"project" | "callback">("project");
+  const [direction, setDirection] = useState(1);
 
   const copy = useMemo(() => {
     if (language === "en") {
       return {
-        intro: "Describe the tattoo in your own words. The quick options are just shortcuts, use only what helps.",
-        badge: "Fast intake, no endless form",
-        ideaTitle: "Tell me the tattoo idea",
-        ideaPlaceholder: "Example: a blackwork raven with geometric details on my forearm. I want something dark, clean, and symbolic...",
-        contactTitle: "How do I reach you?",
-        name: "Name",
-        email: "Email",
-        phone: "Phone",
-        phoneOptional: "Phone, optional",
-        refs: "Reference links, optional",
-        refsPlaceholder: "Pinterest, Instagram, Drive links, or tell me you will send them by DM...",
-        extras: "Add quick details",
-        hideExtras: "Hide details",
-        style: "Style",
-        placement: "Placement",
-        size: "Size",
-        budget: "Budget",
-        availability: "Availability",
-        customPlacement: "Type a placement",
-        customAvailability: "Or type a specific availability",
-        submit: "Send my tattoo idea",
+        intro: "A few quick questions, one at a time. If you would rather skip this, leave your number and I will call you.",
+        next: "Next",
+        back: "Back",
+        choose: "Choose",
+        send: "Send request",
         sending: "Sending...",
-        callback: "Skip this, call me instead",
-        callbackTitle: "Call me instead",
-        callbackText: "Leave a name and phone number. I will call you to talk through the project.",
-        callbackSubmit: "Ask for a call",
+        restart: "Start over",
+        skipTitle: "Skip the form",
+        skipText: "Just call me instead",
+        skipCta: "Request a call",
+        callbackTitle: "Want me to call you?",
+        callbackSubtitle: "Leave your name and number. I will reach out so we can talk through the tattoo idea together.",
+        phonePlaceholder: "Your phone number",
+        namePlaceholder: "Your name",
         success: "Done. Your request was sent. I will get back to you soon.",
         error: "Something went wrong. Try again or DM me on Instagram.",
-        required: "Add your idea and either an email or phone number.",
-        contactHint: "Email is best, phone is enough if you want a call.",
+        required: "This one helps me answer properly.",
+        progress: "Question",
       };
     }
 
     return {
-      intro: "Décris ton tattoo dans tes mots. Les options rapides sont juste des raccourcis, utilise seulement ce qui aide.",
-      badge: "Brief rapide, pas de formulaire interminable",
-      ideaTitle: "Décris-moi l'idée du tattoo",
-      ideaPlaceholder: "Ex: un corbeau blackwork avec des détails géométriques sur l'avant-bras. Je veux quelque chose de sombre, clean et symbolique...",
-      contactTitle: "Je te rejoins comment?",
-      name: "Nom",
-      email: "Courriel",
-      phone: "Téléphone",
-      phoneOptional: "Téléphone, optionnel",
-      refs: "Liens de référence, optionnel",
-      refsPlaceholder: "Pinterest, Instagram, Drive, ou dis-moi que tu vas me les envoyer en DM...",
-      extras: "Ajouter des détails rapides",
-      hideExtras: "Masquer les détails",
-      style: "Style",
-      placement: "Emplacement",
-      size: "Grandeur",
-      budget: "Budget",
-      availability: "Disponibilités",
-      customPlacement: "Écrire un emplacement",
-      customAvailability: "Ou écrire une disponibilité précise",
-      submit: "Envoyer mon idée de tattoo",
+      intro: "Quelques questions simples, une à la fois. Si tu préfères skipper ça, laisse ton numéro et je t'appelle.",
+      next: "Suivant",
+      back: "Retour",
+      choose: "Choisir",
+      send: "Envoyer la demande",
       sending: "Envoi...",
-      callback: "Skip ça, appelle-moi plutôt",
-      callbackTitle: "Appelle-moi plutôt",
-      callbackText: "Laisse ton nom et ton numéro. Je vais t'appeler pour qu'on parle du projet.",
-      callbackSubmit: "Demander un appel",
+      restart: "Recommencer",
+      skipTitle: "Skip le formulaire",
+      skipText: "Demande juste que je t'appelle",
+      skipCta: "J'aimerais être appelé",
+      callbackTitle: "Tu veux que je t'appelle?",
+      callbackSubtitle: "Laisse ton nom et ton numéro. Je vais te contacter pour qu'on parle de ton idée ensemble.",
+      phonePlaceholder: "Ton numéro de téléphone",
+      namePlaceholder: "Ton nom",
       success: "C'est envoyé. Je te reviens bientôt.",
       error: "Oups, ça n'a pas fonctionné. Réessaie ou écris-moi sur Instagram.",
-      required: "Ajoute ton idée et au moins un courriel ou un numéro.",
-      contactHint: "Le courriel est idéal, le téléphone suffit si tu veux un appel.",
+      required: "Cette réponse m'aide à mieux te répondre.",
+      progress: "Question",
     };
   }, [language]);
 
-  const options = useMemo(() => {
+  const tattooStyles = useMemo(
+    () =>
+      language === "fr"
+        ? [
+            "Noir, contraste, blackwork",
+            "Géométrique / ornemental",
+            "Fin, délicat, minimaliste",
+            "Réaliste / illustratif",
+            "Lettrage / symbole",
+            "Je ne suis pas sûr",
+          ]
+        : [
+            "Blackwork / high contrast",
+            "Geometric / ornamental",
+            "Fine, delicate, minimal",
+            "Realistic / illustrative",
+            "Lettering / symbol",
+            "Not sure yet",
+          ],
+    [language]
+  );
+
+  const sizes = useMemo(
+    () =>
+      language === "fr"
+        ? ["Petit", "Moyen", "Grand", "Manchette / gros projet", "Je ne sais pas encore"]
+        : ["Small", "Medium", "Large", "Sleeve / big project", "Not sure yet"],
+    [language]
+  );
+
+  const budgetOptions = useMemo(
+    () =>
+      language === "fr"
+        ? ["Moins de 300$", "300$ à 600$", "600$ à 1000$", "1000$+", "À discuter"]
+        : ["Under $300", "$300 to $600", "$600 to $1000", "$1000+", "Let's discuss"],
+    [language]
+  );
+
+  const availabilityOptions = useMemo(
+    () =>
+      language === "fr"
+        ? ["Soirs de semaine", "Weekend", "Flexible", "J'ai des dates précises"]
+        : ["Weeknights", "Weekend", "Flexible", "I have specific dates"],
+    [language]
+  );
+
+  const questions: Question[] = useMemo(() => {
     if (language === "en") {
-      return {
-        tattooStyle: ["Blackwork", "Geometric", "Fine line", "Realistic", "Lettering", "Not sure"],
-        placement: ["Forearm", "Arm", "Leg", "Back", "Chest", "Ribs", "Hand", "Not sure"],
-        size: ["Small", "Medium", "Large", "Sleeve / big project", "Not sure"],
-        budget: ["Under $300", "$300 to $600", "$600 to $1000", "$1000+", "Let's discuss"],
-        availability: ["Weeknights", "Weekend", "Flexible", "After 7pm", "Specific dates"],
-      };
+      return [
+        {
+          id: "description",
+          eyebrow: "The idea",
+          title: "What do you want to get tattooed?",
+          subtitle: "A sentence is enough. Theme, symbol, mood, story, anything.",
+          type: "textarea",
+          required: true,
+          placeholder: "Example: a blackwork raven with geometric details, connected to my family story...",
+        },
+        {
+          id: "tattooStyle",
+          eyebrow: "Direction",
+          title: "What style feels closest?",
+          subtitle: "No stress if you are not sure. This just helps me guide the design.",
+          type: "options",
+          required: true,
+          options: tattooStyles,
+        },
+        {
+          id: "placement",
+          eyebrow: "Body placement",
+          title: "Where would it go?",
+          subtitle: "Mention the body part and side if you know it.",
+          type: "text",
+          required: true,
+          placeholder: "Inner forearm, shoulder, calf, ribs...",
+        },
+        {
+          id: "size",
+          eyebrow: "Scale",
+          title: "How big are we thinking?",
+          subtitle: "Approximate is perfect.",
+          type: "options",
+          required: true,
+          options: sizes,
+        },
+        {
+          id: "referenceImages",
+          eyebrow: "References",
+          title: "Do you have references?",
+          subtitle: "Paste links or describe them. You can also send them later on Instagram.",
+          type: "textarea",
+          placeholder: "Pinterest / Instagram links, or a quick description...",
+        },
+        {
+          id: "budget",
+          eyebrow: "Budget",
+          title: "Do you have a budget in mind?",
+          subtitle: "Optional, but useful to suggest the right scope.",
+          type: "options",
+          options: budgetOptions,
+        },
+        {
+          id: "availability",
+          eyebrow: "Timing",
+          title: "When are you usually available?",
+          subtitle: "I mostly tattoo in the evening, so tell me what works for you.",
+          type: "options",
+          options: availabilityOptions,
+        },
+        {
+          id: "name",
+          eyebrow: "Contact",
+          title: "What is your name?",
+          subtitle: "So I know who I am replying to.",
+          type: "text",
+          required: true,
+          placeholder: "Your name",
+        },
+        {
+          id: "email",
+          eyebrow: "Contact",
+          title: "Where should I reply?",
+          subtitle: "Email is best for a clean project follow-up.",
+          type: "email",
+          required: true,
+          placeholder: "you@example.com",
+        },
+        {
+          id: "phone",
+          eyebrow: "Optional",
+          title: "Want to leave a phone number too?",
+          subtitle: "Optional, but useful if a quick call is easier.",
+          type: "tel",
+          placeholder: "Your phone number",
+        },
+      ];
     }
 
-    return {
-      tattooStyle: ["Blackwork", "Géométrique", "Fine line", "Réaliste", "Lettrage", "Pas sûr"],
-      placement: ["Avant-bras", "Bras", "Jambe", "Dos", "Torse", "Côtes", "Main", "Pas sûr"],
-      size: ["Petit", "Moyen", "Grand", "Manchette / gros projet", "Pas sûr"],
-      budget: ["Moins de 300$", "300$ à 600$", "600$ à 1000$", "1000$+", "À discuter"],
-      availability: ["Soirs de semaine", "Weekend", "Flexible", "Après 19h", "Dates précises"],
-    };
-  }, [language]);
+    return [
+      {
+        id: "description",
+        eyebrow: "L'idée",
+        title: "Qu'est-ce que tu veux te faire tatouer?",
+        subtitle: "Une phrase suffit. Thème, symbole, vibe, histoire, peu importe.",
+        type: "textarea",
+        required: true,
+        placeholder: "Ex: un corbeau blackwork avec des détails géométriques, lié à mon histoire familiale...",
+      },
+      {
+        id: "tattooStyle",
+        eyebrow: "Direction",
+        title: "Quel style se rapproche le plus?",
+        subtitle: "Pas grave si tu n'es pas sûr. Ça m'aide juste à orienter le design.",
+        type: "options",
+        required: true,
+        options: tattooStyles,
+      },
+      {
+        id: "placement",
+        eyebrow: "Emplacement",
+        title: "Tu le veux où sur le corps?",
+        subtitle: "Mets la zone et le côté si tu le sais déjà.",
+        type: "text",
+        required: true,
+        placeholder: "Avant-bras intérieur, épaule, mollet, côtes...",
+      },
+      {
+        id: "size",
+        eyebrow: "Format",
+        title: "On parle de quelle grandeur environ?",
+        subtitle: "Une approximation est parfaite.",
+        type: "options",
+        required: true,
+        options: sizes,
+      },
+      {
+        id: "referenceImages",
+        eyebrow: "Références",
+        title: "As-tu des images de référence?",
+        subtitle: "Colle des liens ou décris-les. Tu peux aussi me les envoyer ensuite sur Instagram.",
+        type: "textarea",
+        placeholder: "Liens Pinterest / Instagram, ou une petite description...",
+      },
+      {
+        id: "budget",
+        eyebrow: "Budget",
+        title: "As-tu un budget en tête?",
+        subtitle: "Optionnel, mais utile pour proposer une bonne ampleur de projet.",
+        type: "options",
+        options: budgetOptions,
+      },
+      {
+        id: "availability",
+        eyebrow: "Timing",
+        title: "Tu es disponible quand en général?",
+        subtitle: "Je tatoue surtout en soirée, donc dis-moi ce qui marche pour toi.",
+        type: "options",
+        options: availabilityOptions,
+      },
+      {
+        id: "name",
+        eyebrow: "Contact",
+        title: "C'est quoi ton nom?",
+        subtitle: "Pour savoir à qui je réponds.",
+        type: "text",
+        required: true,
+        placeholder: "Ton nom",
+      },
+      {
+        id: "email",
+        eyebrow: "Contact",
+        title: "Je te réponds où?",
+        subtitle: "Le courriel est le plus simple pour garder le projet clair.",
+        type: "email",
+        required: true,
+        placeholder: "toi@exemple.com",
+      },
+      {
+        id: "phone",
+        eyebrow: "Optionnel",
+        title: "Tu veux laisser ton numéro aussi?",
+        subtitle: "Optionnel, mais pratique si un appel rapide est plus simple.",
+        type: "tel",
+        placeholder: "Ton numéro",
+      },
+    ];
+  }, [availabilityOptions, budgetOptions, language, sizes, tattooStyles]);
 
-  const canSubmit = formData.description.trim().length > 4 && (formData.email.trim() || formData.phone.trim());
-  const canCallback = formData.phone.trim().length > 4;
+  const currentQuestion = questions[step];
+  const progress = ((step + 1) / questions.length) * 100;
+  const currentValue = currentQuestion ? formData[currentQuestion.id] : "";
+  const canContinue = currentQuestion?.required ? currentValue.trim().length > 0 : true;
 
-  const updateField = (field: FieldKey, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const toggleChip = (field: FieldKey, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: mergeValue(prev[field], value) }));
+  const updateField = (id: keyof FormData, value: string) => {
+    setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
   const submitPayload = async (payload: FormData) => {
@@ -175,8 +362,8 @@ export default function ContactForm() {
 
       setSubmitStatus("success");
       setFormData(emptyForm);
-      setCallbackMode(false);
-      setShowExtras(false);
+      setStep(0);
+      setMode("project");
     } catch (error) {
       setSubmitStatus("error");
     } finally {
@@ -185,15 +372,28 @@ export default function ContactForm() {
     }
   };
 
-  const handleSubmit = () => {
-    if (!canSubmit) return;
-    submitPayload(formData);
+  const handleNext = () => {
+    if (!canContinue) return;
+
+    if (step === questions.length - 1) {
+      submitPayload(formData);
+      return;
+    }
+
+    setDirection(1);
+    setStep((prev) => prev + 1);
   };
 
-  const handleCallback = () => {
-    if (!canCallback) return;
+  const handleBack = () => {
+    if (step === 0) return;
+    setDirection(-1);
+    setStep((prev) => prev - 1);
+  };
 
-    submitPayload({
+  const handleCallbackSubmit = () => {
+    if (!formData.phone.trim()) return;
+
+    const payload: FormData = {
       ...emptyForm,
       name: formData.name || (language === "fr" ? "Client à rappeler" : "Callback request"),
       email: formData.email,
@@ -202,46 +402,88 @@ export default function ContactForm() {
       placement: language === "fr" ? "À discuter" : "To discuss",
       size: language === "fr" ? "À discuter" : "To discuss",
       description:
-        formData.description ||
-        (language === "fr"
-          ? "Le client demande à être appelé pour discuter du projet."
-          : "The client requested a call to discuss the project."),
-      referenceImages: formData.referenceImages,
-      budget: formData.budget,
-      availability: formData.availability || (language === "fr" ? "À confirmer par téléphone" : "To confirm by phone"),
-    });
+        language === "fr"
+          ? "Le client a skippé le questionnaire et demande à être appelé pour discuter du projet."
+          : "The client skipped the questionnaire and requested a call to discuss the project.",
+      availability: language === "fr" ? "À confirmer par téléphone" : "To confirm by phone",
+    };
+
+    submitPayload(payload);
   };
 
-  const ChipGroup = ({ field, items }: { field: FieldKey; items: string[] }) => (
-    <div className="flex flex-wrap gap-2">
-      {items.map((item) => {
-        const active = formData[field] === item;
-        return (
-          <button
-            key={item}
-            type="button"
-            onClick={() => toggleChip(field, item)}
-            className={`rounded-full border px-3 py-2 text-sm transition-all ${
-              active
-                ? "border-gold-400 bg-gold-400 text-ink-900 shadow-lg shadow-gold-400/10"
-                : "border-ink-600 bg-ink-800/75 text-gray-300 hover:border-gold-400/50 hover:text-gold-400"
-            }`}
-          >
-            {item}
-          </button>
-        );
-      })}
-    </div>
-  );
+  const renderQuestionInput = (question: Question) => {
+    if (question.type === "options") {
+      return (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {question.options?.map((option) => {
+            const selected = formData[question.id] === option;
+            return (
+              <button
+                key={option}
+                type="button"
+                onClick={() => {
+                  updateField(question.id, option);
+                  if (step < questions.length - 1) {
+                    window.setTimeout(() => {
+                      setDirection(1);
+                      setStep((prev) => Math.min(prev + 1, questions.length - 1));
+                    }, 180);
+                  }
+                }}
+                className={`group text-left rounded-2xl border p-4 transition-all ${
+                  selected
+                    ? "border-gold-400 bg-gold-400/15 shadow-lg shadow-gold-400/10"
+                    : "border-ink-600 bg-ink-800/70 hover:border-gold-400/50 hover:bg-ink-700/80"
+                }`}
+              >
+                <span className="flex items-center justify-between gap-3">
+                  <span className="text-gray-100 font-medium">{option}</span>
+                  <span
+                    className={`h-7 w-7 rounded-full border flex items-center justify-center transition-colors ${
+                      selected ? "border-gold-400 bg-gold-400 text-ink-900" : "border-ink-500 text-ink-500 group-hover:text-gold-400"
+                    }`}
+                  >
+                    {selected ? <FaCheck size={12} /> : <FaArrowRight size={11} />}
+                  </span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      );
+    }
+
+    if (question.type === "textarea") {
+      return (
+        <textarea
+          value={formData[question.id]}
+          onChange={(event) => updateField(question.id, event.target.value)}
+          rows={5}
+          className="w-full rounded-2xl border border-ink-600 bg-ink-800/80 px-5 py-4 text-white placeholder-gray-500 outline-none transition-all focus:border-gold-400 focus:ring-4 focus:ring-gold-400/10 resize-none"
+          placeholder={question.placeholder}
+        />
+      );
+    }
+
+    return (
+      <input
+        type={question.type}
+        value={formData[question.id]}
+        onChange={(event) => updateField(question.id, event.target.value)}
+        className="w-full rounded-2xl border border-ink-600 bg-ink-800/80 px-5 py-4 text-white placeholder-gray-500 outline-none transition-all focus:border-gold-400 focus:ring-4 focus:ring-gold-400/10"
+        placeholder={question.placeholder}
+      />
+    );
+  };
 
   return (
     <section id="contact" className="relative py-20 md:py-32 bg-ink-900 scroll-mt-20 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute left-1/2 top-10 h-80 w-80 -translate-x-1/2 rounded-full bg-gold-400/10 blur-3xl" />
-        <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-gold-600/5 blur-3xl" />
+        <div className="absolute left-1/2 top-16 h-72 w-72 -translate-x-1/2 rounded-full bg-gold-400/10 blur-3xl" />
+        <div className="absolute bottom-8 right-0 h-96 w-96 rounded-full bg-gold-600/5 blur-3xl" />
       </div>
 
-      <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -249,10 +491,6 @@ export default function ContactForm() {
           viewport={{ once: true }}
           className="text-center mb-10"
         >
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-gold-400/20 bg-gold-400/10 px-4 py-2 text-sm text-gold-400">
-            <FaBolt size={13} />
-            {copy.badge}
-          </div>
           <h2 className="text-4xl md:text-5xl font-display font-bold mb-4">
             <span className="text-gray-100">{t("contact.title1")}</span>
             <span className="gradient-text">{t("contact.title2")}</span>
@@ -269,206 +507,134 @@ export default function ContactForm() {
         >
           <div className="absolute -top-px left-8 right-8 h-px bg-gradient-to-r from-transparent via-gold-400/60 to-transparent" />
 
-          <AnimatePresence mode="wait">
-            {!callbackMode ? (
-              <motion.div key="brief" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}>
-                <div className="grid grid-cols-1 lg:grid-cols-[1.35fr_0.9fr] gap-6">
-                  <div className="space-y-5">
-                    <div>
-                      <label className="block text-sm font-semibold uppercase tracking-[0.2em] text-gold-400 mb-3">
-                        {copy.ideaTitle}
-                      </label>
-                      <textarea
-                        value={formData.description}
-                        onChange={(event) => updateField("description", event.target.value)}
-                        rows={8}
-                        className="w-full rounded-3xl border border-ink-600 bg-ink-800/80 px-5 py-5 text-white placeholder-gray-500 outline-none transition-all focus:border-gold-400 focus:ring-4 focus:ring-gold-400/10 resize-none text-base leading-relaxed"
-                        placeholder={copy.ideaPlaceholder}
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">{copy.refs}</label>
-                      <input
-                        type="text"
-                        value={formData.referenceImages}
-                        onChange={(event) => updateField("referenceImages", event.target.value)}
-                        className="w-full rounded-2xl border border-ink-600 bg-ink-800/80 px-5 py-4 text-white placeholder-gray-500 outline-none transition-all focus:border-gold-400 focus:ring-4 focus:ring-gold-400/10"
-                        placeholder={copy.refsPlaceholder}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="rounded-3xl border border-ink-600 bg-ink-800/45 p-4 sm:p-5 space-y-4">
-                    <h3 className="text-xl font-display font-bold text-gray-100">{copy.contactTitle}</h3>
-                    <p className="text-sm text-gray-500">{copy.contactHint}</p>
-
-                    <input
-                      type="text"
-                      value={formData.name}
-                      onChange={(event) => updateField("name", event.target.value)}
-                      className="w-full rounded-2xl border border-ink-600 bg-ink-900/60 px-4 py-3 text-white placeholder-gray-500 outline-none transition-all focus:border-gold-400 focus:ring-4 focus:ring-gold-400/10"
-                      placeholder={copy.name}
-                    />
-                    <input
-                      type="email"
-                      value={formData.email}
-                      onChange={(event) => updateField("email", event.target.value)}
-                      className="w-full rounded-2xl border border-ink-600 bg-ink-900/60 px-4 py-3 text-white placeholder-gray-500 outline-none transition-all focus:border-gold-400 focus:ring-4 focus:ring-gold-400/10"
-                      placeholder={copy.email}
-                    />
-                    <input
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(event) => updateField("phone", event.target.value)}
-                      className="w-full rounded-2xl border border-ink-600 bg-ink-900/60 px-4 py-3 text-white placeholder-gray-500 outline-none transition-all focus:border-gold-400 focus:ring-4 focus:ring-gold-400/10"
-                      placeholder={copy.phoneOptional}
-                    />
-
-                    {!canSubmit && (
-                      <p className="text-sm text-gold-400/80">{copy.required}</p>
-                    )}
-
-                    <button
-                      type="button"
-                      onClick={handleSubmit}
-                      disabled={!canSubmit || isSubmitting}
-                      className={`w-full inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-4 font-semibold transition-all ${
-                        !canSubmit || isSubmitting
-                          ? "bg-ink-600 text-gray-400 cursor-not-allowed"
-                          : "bg-gold-400 text-ink-900 hover:bg-gold-500 hover:scale-[1.01] shadow-lg shadow-gold-400/20"
-                      }`}
-                    >
-                      {isSubmitting ? copy.sending : copy.submit}
-                      <FaPaperPlane size={14} />
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setCallbackMode(true)}
-                      className="w-full inline-flex items-center justify-center gap-2 rounded-2xl border border-gold-400/25 bg-gold-400/10 px-5 py-3 text-gold-400 transition-all hover:border-gold-400/60 hover:bg-gold-400/15"
-                    >
-                      <FaPhoneAlt size={14} />
-                      {copy.callback}
-                    </button>
-                  </div>
+          {mode === "project" ? (
+            <>
+              <div className="mb-8">
+                <div className="flex items-center justify-between text-xs uppercase tracking-[0.25em] text-gray-500 mb-3">
+                  <span>{copy.progress} {step + 1}/{questions.length}</span>
+                  <span>{Math.round(progress)}%</span>
                 </div>
-
-                <div className="mt-6 rounded-3xl border border-ink-600 bg-ink-800/35 overflow-hidden">
-                  <button
-                    type="button"
-                    onClick={() => setShowExtras((value) => !value)}
-                    className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left hover:bg-ink-700/40 transition-colors"
-                  >
-                    <span className="flex items-center gap-3 text-gray-100 font-semibold">
-                      <FaRulerCombined className="text-gold-400" />
-                      {showExtras ? copy.hideExtras : copy.extras}
-                    </span>
-                    <FaChevronDown className={`text-gold-400 transition-transform ${showExtras ? "rotate-180" : ""}`} />
-                  </button>
-
-                  <AnimatePresence initial={false}>
-                    {showExtras && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.25, ease: "easeOut" }}
-                      >
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-5 pb-5 pt-1">
-                          <div>
-                            <p className="text-sm font-medium text-gray-300 mb-3">{copy.style}</p>
-                            <ChipGroup field="tattooStyle" items={options.tattooStyle} />
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-gray-300 mb-3">{copy.size}</p>
-                            <ChipGroup field="size" items={options.size} />
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-gray-300 mb-3">{copy.placement}</p>
-                            <ChipGroup field="placement" items={options.placement} />
-                            <input
-                              type="text"
-                              value={formData.placement}
-                              onChange={(event) => updateField("placement", event.target.value)}
-                              className="mt-3 w-full rounded-2xl border border-ink-600 bg-ink-900/60 px-4 py-3 text-white placeholder-gray-500 outline-none transition-all focus:border-gold-400 focus:ring-4 focus:ring-gold-400/10"
-                              placeholder={copy.customPlacement}
-                            />
-                          </div>
-                          <div>
-                            <p className="text-sm font-medium text-gray-300 mb-3">{copy.budget}</p>
-                            <ChipGroup field="budget" items={options.budget} />
-                          </div>
-                          <div className="md:col-span-2">
-                            <p className="text-sm font-medium text-gray-300 mb-3 flex items-center gap-2">
-                              <FaRegClock className="text-gold-400" />
-                              {copy.availability}
-                            </p>
-                            <ChipGroup field="availability" items={options.availability} />
-                            <input
-                              type="text"
-                              value={formData.availability}
-                              onChange={(event) => updateField("availability", event.target.value)}
-                              className="mt-3 w-full rounded-2xl border border-ink-600 bg-ink-900/60 px-4 py-3 text-white placeholder-gray-500 outline-none transition-all focus:border-gold-400 focus:ring-4 focus:ring-gold-400/10"
-                              placeholder={copy.customAvailability}
-                            />
-                          </div>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              </motion.div>
-            ) : (
-              <motion.div key="callback" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} className="max-w-2xl mx-auto text-center py-4">
-                <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gold-400/15 text-gold-400 border border-gold-400/30">
-                  <FaPhoneAlt size={24} />
-                </div>
-                <h3 className="text-3xl md:text-4xl font-display font-bold text-gray-100 mb-3">{copy.callbackTitle}</h3>
-                <p className="text-gray-400 mb-8">{copy.callbackText}</p>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
-                  <input
-                    type="text"
-                    value={formData.name}
-                    onChange={(event) => updateField("name", event.target.value)}
-                    className="w-full rounded-2xl border border-ink-600 bg-ink-800/80 px-5 py-4 text-white placeholder-gray-500 outline-none transition-all focus:border-gold-400 focus:ring-4 focus:ring-gold-400/10"
-                    placeholder={copy.name}
-                  />
-                  <input
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(event) => updateField("phone", event.target.value)}
-                    className="w-full rounded-2xl border border-ink-600 bg-ink-800/80 px-5 py-4 text-white placeholder-gray-500 outline-none transition-all focus:border-gold-400 focus:ring-4 focus:ring-gold-400/10"
-                    placeholder={copy.phone}
+                <div className="h-2 rounded-full bg-ink-700 overflow-hidden">
+                  <motion.div
+                    className="h-full rounded-full bg-gradient-to-r from-gold-600 via-gold-400 to-amber-200"
+                    initial={false}
+                    animate={{ width: `${progress}%` }}
+                    transition={{ duration: 0.35, ease: "easeOut" }}
                   />
                 </div>
+              </div>
 
-                <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
-                  <button
-                    type="button"
-                    onClick={() => setCallbackMode(false)}
-                    className="rounded-2xl border border-ink-600 px-5 py-3 text-gray-300 transition-all hover:border-gold-400/50 hover:text-gold-400"
-                  >
-                    {language === "fr" ? "Retour au brief" : "Back to brief"}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleCallback}
-                    disabled={!canCallback || isSubmitting}
-                    className={`inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-3 font-semibold transition-all ${
-                      !canCallback || isSubmitting
-                        ? "bg-ink-600 text-gray-400 cursor-not-allowed"
-                        : "bg-gold-400 text-ink-900 hover:bg-gold-500 hover:scale-[1.01] shadow-lg shadow-gold-400/20"
-                    }`}
-                  >
-                    {isSubmitting ? copy.sending : copy.callbackSubmit}
-                    <FaPhoneAlt size={14} />
-                  </button>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              <AnimatePresence mode="wait" custom={direction}>
+                <motion.div
+                  key={currentQuestion.id}
+                  custom={direction}
+                  initial={{ opacity: 0, x: direction > 0 ? 40 : -40, scale: 0.98 }}
+                  animate={{ opacity: 1, x: 0, scale: 1 }}
+                  exit={{ opacity: 0, x: direction > 0 ? -40 : 40, scale: 0.98 }}
+                  transition={{ duration: 0.28, ease: "easeOut" }}
+                  className="min-h-[360px]"
+                >
+                  <div className="mb-6">
+                    <p className="text-gold-400 text-sm font-semibold uppercase tracking-[0.25em] mb-3">
+                      {currentQuestion.eyebrow}
+                    </p>
+                    <h3 className="text-3xl md:text-4xl font-display font-bold text-gray-100 mb-3">
+                      {currentQuestion.title}
+                    </h3>
+                    <p className="text-gray-400 leading-relaxed">{currentQuestion.subtitle}</p>
+                  </div>
+
+                  {renderQuestionInput(currentQuestion)}
+
+                  {!canContinue && (
+                    <p className="mt-3 text-sm text-gold-400/80">{copy.required}</p>
+                  )}
+                </motion.div>
+              </AnimatePresence>
+
+              <div className="mt-8 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  disabled={step === 0 || isSubmitting}
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-ink-600 px-5 py-3 text-gray-300 transition-all hover:border-gold-400/50 hover:text-gold-400 disabled:opacity-30 disabled:hover:border-ink-600 disabled:hover:text-gray-300"
+                >
+                  <FaArrowLeft size={13} />
+                  {copy.back}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  disabled={!canContinue || isSubmitting}
+                  className={`inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-semibold transition-all ${
+                    !canContinue || isSubmitting
+                      ? "bg-ink-600 text-gray-400 cursor-not-allowed"
+                      : "bg-gold-400 text-ink-900 hover:bg-gold-500 hover:scale-[1.02] shadow-lg shadow-gold-400/20"
+                  }`}
+                >
+                  {isSubmitting ? copy.sending : step === questions.length - 1 ? copy.send : copy.next}
+                  {step === questions.length - 1 ? <FaPaperPlane size={14} /> : <FaArrowRight size={13} />}
+                </button>
+              </div>
+            </>
+          ) : (
+            <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="min-h-[360px]">
+              <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-gold-400/15 text-gold-400 border border-gold-400/30">
+                <FaPhoneAlt size={24} />
+              </div>
+              <div className="text-center mb-8">
+                <p className="text-gold-400 text-sm font-semibold uppercase tracking-[0.25em] mb-3">
+                  {copy.skipTitle}
+                </p>
+                <h3 className="text-3xl md:text-4xl font-display font-bold text-gray-100 mb-3">
+                  {copy.callbackTitle}
+                </h3>
+                <p className="text-gray-400 max-w-xl mx-auto">{copy.callbackSubtitle}</p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(event) => updateField("name", event.target.value)}
+                  className="w-full rounded-2xl border border-ink-600 bg-ink-800/80 px-5 py-4 text-white placeholder-gray-500 outline-none transition-all focus:border-gold-400 focus:ring-4 focus:ring-gold-400/10"
+                  placeholder={copy.namePlaceholder}
+                />
+                <input
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(event) => updateField("phone", event.target.value)}
+                  className="w-full rounded-2xl border border-ink-600 bg-ink-800/80 px-5 py-4 text-white placeholder-gray-500 outline-none transition-all focus:border-gold-400 focus:ring-4 focus:ring-gold-400/10"
+                  placeholder={copy.phonePlaceholder}
+                />
+              </div>
+
+              <div className="mt-8 flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
+                <button
+                  type="button"
+                  onClick={() => setMode("project")}
+                  className="inline-flex items-center justify-center gap-2 rounded-full border border-ink-600 px-5 py-3 text-gray-300 transition-all hover:border-gold-400/50 hover:text-gold-400"
+                >
+                  <FaRedo size={13} />
+                  {copy.restart}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCallbackSubmit}
+                  disabled={!formData.phone.trim() || isSubmitting}
+                  className={`inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 font-semibold transition-all ${
+                    !formData.phone.trim() || isSubmitting
+                      ? "bg-ink-600 text-gray-400 cursor-not-allowed"
+                      : "bg-gold-400 text-ink-900 hover:bg-gold-500 hover:scale-[1.02] shadow-lg shadow-gold-400/20"
+                  }`}
+                >
+                  {isSubmitting ? copy.sending : copy.skipCta}
+                  <FaPhoneAlt size={14} />
+                </button>
+              </div>
+            </motion.div>
+          )}
 
           {submitStatus === "success" && (
             <motion.div
@@ -493,6 +659,28 @@ export default function ContactForm() {
           )}
         </motion.div>
 
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.15 }}
+          viewport={{ once: true }}
+          className="sticky bottom-4 z-20 mt-6"
+        >
+          <button
+            type="button"
+            onClick={() => setMode("callback")}
+            className="mx-auto flex w-full max-w-xl items-center justify-between gap-4 rounded-2xl border border-gold-400/25 bg-ink-800/95 px-5 py-4 text-left shadow-2xl shadow-black/30 backdrop-blur-xl transition-all hover:border-gold-400/60 hover:bg-ink-700/95"
+          >
+            <span>
+              <span className="block text-sm font-semibold text-gray-100">{copy.skipTitle}</span>
+              <span className="block text-xs text-gray-400">{copy.skipText}</span>
+            </span>
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gold-400 text-ink-900">
+              <FaPhoneAlt size={15} />
+            </span>
+          </button>
+        </motion.div>
+
         <motion.p
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -505,9 +693,9 @@ export default function ContactForm() {
             href="https://instagram.com/tattoomatha"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-gold-400 hover:underline"
+            className="text-gold-400 hover:underline"
           >
-            <FaInstagram size={14} /> Instagram
+            Instagram
           </a>
         </motion.p>
       </div>
