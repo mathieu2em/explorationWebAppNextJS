@@ -158,22 +158,22 @@ export default function ContactForm() {
     if (language === "en") {
       return [
         {
+          id: "tattooStyle",
+          eyebrow: "Quick start",
+          title: "What kind of tattoo are we talking about?",
+          subtitle: "One tap is enough. You can choose “not sure” and keep going.",
+          type: "options",
+          required: true,
+          options: tattooStyles,
+        },
+        {
           id: "description",
           eyebrow: "The idea",
-          title: "What do you want to get tattooed?",
+          title: "Now, what is the idea?",
           subtitle: "A sentence is enough. Theme, symbol, mood, story, anything.",
           type: "textarea",
           required: true,
           placeholder: "Example: a blackwork raven with geometric details, connected to my family story...",
-        },
-        {
-          id: "tattooStyle",
-          eyebrow: "Direction",
-          title: "What style feels closest?",
-          subtitle: "No stress if you are not sure. This just helps me guide the design.",
-          type: "options",
-          required: true,
-          options: tattooStyles,
         },
         {
           id: "placement",
@@ -248,22 +248,22 @@ export default function ContactForm() {
 
     return [
       {
+        id: "tattooStyle",
+        eyebrow: "Départ rapide",
+        title: "On part sur quel genre de tattoo?",
+        subtitle: "Un clic suffit. Tu peux choisir “pas sûr” et continuer.",
+        type: "options",
+        required: true,
+        options: tattooStyles,
+      },
+      {
         id: "description",
         eyebrow: "L'idée",
-        title: "Qu'est-ce que tu veux te faire tatouer?",
+        title: "Maintenant, c'est quoi l'idée?",
         subtitle: "Une phrase suffit. Thème, symbole, vibe, histoire, peu importe.",
         type: "textarea",
         required: true,
         placeholder: "Ex: un corbeau blackwork avec des détails géométriques, lié à mon histoire familiale...",
-      },
-      {
-        id: "tattooStyle",
-        eyebrow: "Direction",
-        title: "Quel style se rapproche le plus?",
-        subtitle: "Pas grave si tu n'es pas sûr. Ça m'aide juste à orienter le design.",
-        type: "options",
-        required: true,
-        options: tattooStyles,
       },
       {
         id: "placement",
