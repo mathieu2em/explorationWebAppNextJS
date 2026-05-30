@@ -112,20 +112,16 @@ export default function ContactForm() {
     () =>
       language === "fr"
         ? [
-            "Noir, contraste, blackwork",
-            "Géométrique / ornemental",
-            "Fin, délicat, minimaliste",
-            "Réaliste / illustratif",
-            "Lettrage / symbole",
-            "Je ne suis pas sûr",
+            "J’ai une idée précise",
+            "J’ai une vibe / inspiration",
+            "Cover-up / rework",
+            "Je veux être guidé",
           ]
         : [
-            "Blackwork / high contrast",
-            "Geometric / ornamental",
-            "Fine, delicate, minimal",
-            "Realistic / illustrative",
-            "Lettering / symbol",
-            "Not sure yet",
+            "I have a clear idea",
+            "I have a vibe / inspiration",
+            "Cover-up / rework",
+            "I want guidance",
           ],
     [language]
   );
@@ -133,24 +129,24 @@ export default function ContactForm() {
   const sizes = useMemo(
     () =>
       language === "fr"
-        ? ["Petit", "Moyen", "Grand", "Manchette / gros projet", "Je ne sais pas encore"]
-        : ["Small", "Medium", "Large", "Sleeve / big project", "Not sure yet"],
+        ? ["Petit", "Moyen", "Grand", "Je ne sais pas"]
+        : ["Small", "Medium", "Large", "Not sure"],
     [language]
   );
 
   const budgetOptions = useMemo(
     () =>
       language === "fr"
-        ? ["Moins de 300$", "300$ à 600$", "600$ à 1000$", "1000$+", "À discuter"]
-        : ["Under $300", "$300 to $600", "$600 to $1000", "$1000+", "Let's discuss"],
+        ? ["Moins de 300$", "300$ à 700$", "700$+", "À discuter"]
+        : ["Under $300", "$300 to $700", "$700+", "Let's discuss"],
     [language]
   );
 
   const availabilityOptions = useMemo(
     () =>
       language === "fr"
-        ? ["Soirs de semaine", "Weekend", "Flexible", "J'ai des dates précises"]
-        : ["Weeknights", "Weekend", "Flexible", "I have specific dates"],
+        ? ["Soirs de semaine", "Weekend", "Flexible"]
+        : ["Weeknights", "Weekend", "Flexible"],
     [language]
   );
 
@@ -160,8 +156,8 @@ export default function ContactForm() {
         {
           id: "tattooStyle",
           eyebrow: "Quick start",
-          title: "What kind of tattoo are we talking about?",
-          subtitle: "One tap is enough. You can choose “not sure” and keep going.",
+          title: "Where are you at with the project?",
+          subtitle: "Pick the closest starting point. We’ll refine it after.",
           type: "options",
           required: true,
           options: tattooStyles,
@@ -250,8 +246,8 @@ export default function ContactForm() {
       {
         id: "tattooStyle",
         eyebrow: "Départ rapide",
-        title: "On part sur quel genre de tattoo?",
-        subtitle: "Un clic suffit. Tu peux choisir “pas sûr” et continuer.",
+        title: "Tu es rendu où dans ton projet?",
+        subtitle: "Choisis le point de départ le plus proche. On précise après.",
         type: "options",
         required: true,
         options: tattooStyles,
