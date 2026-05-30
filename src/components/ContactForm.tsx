@@ -109,33 +109,49 @@ export default function ContactForm() {
   }, [language]);
 
   const tattooStyles = useMemo(
-    () => [
-      t("style.blackwork"),
-      t("style.geometric"),
-      t("style.microRealism"),
-      t("style.fineLine"),
-      t("style.realism"),
-      t("style.illustrative"),
-      t("style.japanese"),
-      t("style.lettering"),
-      t("style.other"),
-      language === "fr" ? "Je ne suis pas sûr" : "Not sure yet",
-    ],
-    [language, t]
+    () =>
+      language === "fr"
+        ? [
+            "Noir, contraste, blackwork",
+            "Géométrique / ornemental",
+            "Fin, délicat, minimaliste",
+            "Réaliste / illustratif",
+            "Lettrage / symbole",
+            "Je ne suis pas sûr",
+          ]
+        : [
+            "Blackwork / high contrast",
+            "Geometric / ornamental",
+            "Fine, delicate, minimal",
+            "Realistic / illustrative",
+            "Lettering / symbol",
+            "Not sure yet",
+          ],
+    [language]
   );
 
   const sizes = useMemo(
-    () => [
-      t("size.tiny"),
-      t("size.small"),
-      t("size.medium"),
-      t("size.large"),
-      t("size.extraLarge"),
-      t("size.halfSleeve"),
-      t("size.fullSleeve"),
-      t("size.notSure"),
-    ],
-    [t]
+    () =>
+      language === "fr"
+        ? ["Petit", "Moyen", "Grand", "Manchette / gros projet", "Je ne sais pas encore"]
+        : ["Small", "Medium", "Large", "Sleeve / big project", "Not sure yet"],
+    [language]
+  );
+
+  const budgetOptions = useMemo(
+    () =>
+      language === "fr"
+        ? ["Moins de 300$", "300$ à 600$", "600$ à 1000$", "1000$+", "À discuter"]
+        : ["Under $300", "$300 to $600", "$600 to $1000", "$1000+", "Let's discuss"],
+    [language]
+  );
+
+  const availabilityOptions = useMemo(
+    () =>
+      language === "fr"
+        ? ["Soirs de semaine", "Weekend", "Flexible", "J'ai des dates précises"]
+        : ["Weeknights", "Weekend", "Flexible", "I have specific dates"],
+    [language]
   );
 
   const questions: Question[] = useMemo(() => {
@@ -190,16 +206,16 @@ export default function ContactForm() {
           eyebrow: "Budget",
           title: "Do you have a budget in mind?",
           subtitle: "Optional, but useful to suggest the right scope.",
-          type: "text",
-          placeholder: "$300, $500 to $800, not sure...",
+          type: "options",
+          options: budgetOptions,
         },
         {
           id: "availability",
           eyebrow: "Timing",
           title: "When are you usually available?",
           subtitle: "I mostly tattoo in the evening, so tell me what works for you.",
-          type: "text",
-          placeholder: "Weeknights, weekends, after 7pm, specific dates...",
+          type: "options",
+          options: availabilityOptions,
         },
         {
           id: "name",
@@ -280,16 +296,16 @@ export default function ContactForm() {
         eyebrow: "Budget",
         title: "As-tu un budget en tête?",
         subtitle: "Optionnel, mais utile pour proposer une bonne ampleur de projet.",
-        type: "text",
-        placeholder: "300$, 500$ à 800$, je ne sais pas...",
+        type: "options",
+        options: budgetOptions,
       },
       {
         id: "availability",
         eyebrow: "Timing",
         title: "Tu es disponible quand en général?",
         subtitle: "Je tatoue surtout en soirée, donc dis-moi ce qui marche pour toi.",
-        type: "text",
-        placeholder: "Soirs de semaine, weekends, après 19h, dates précises...",
+        type: "options",
+        options: availabilityOptions,
       },
       {
         id: "name",
@@ -318,7 +334,7 @@ export default function ContactForm() {
         placeholder: "Ton numéro",
       },
     ];
-  }, [language, sizes, tattooStyles]);
+  }, [availabilityOptions, budgetOptions, language, sizes, tattooStyles]);
 
   const currentQuestion = questions[step];
   const progress = ((step + 1) / questions.length) * 100;
