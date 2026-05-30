@@ -38,14 +38,14 @@ const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 export async function GET() {
   try {
     const accessToken = process.env.INSTAGRAM_ACCESS_TOKEN;
-    const userId = process.env.INSTAGRAM_USER_ID;
+    const userId = process.env.INSTAGRAM_USER_ID || process.env.INSTAGRAM_BUSINESS_ID;
 
     // Vérifier si les variables d'environnement sont configurées
     if (!accessToken || !userId) {
       return NextResponse.json(
         { 
           error: "Instagram API not configured",
-          message: "Veuillez configurer INSTAGRAM_ACCESS_TOKEN et INSTAGRAM_USER_ID dans .env.local"
+          message: "Veuillez configurer INSTAGRAM_ACCESS_TOKEN et INSTAGRAM_USER_ID ou INSTAGRAM_BUSINESS_ID dans .env.local"
         },
         { status: 503 }
       );
@@ -60,24 +60,44 @@ export async function GET() {
       });
     }
 
-    // Appeler l'API Instagram Graph (avec Instagram Login)
-    // Note: like_count et comments_count nécessitent un compte Business/Creator
-    const fields = "id,caption,media_type,media_url,thumbnail_url,permalink,timestamp,like_count,comments_count";
-    const limit = 12; // Nombre de posts à récupérer
+    // Appeler l'API Instagram Graph.
+    // like_count/comments_count peuvent échouer selon le type de token, donc on retry sans stats si nécessaire.
+    const baseFields = "id,caption,media_type,media_url,thumbnail_url,permalink,timestamp";
+    const statsFields = "like_count,comments_count";
+    const limit = 12;
 
-    const response = await fetch(
-      `https://graph.instagram.com/v24.0/${userId}/media?fields=${fields}&limit=${limit}&access_token=${accessToken}`,
-      {
-        next: { revalidate: 300 }, // Revalidate every 5 minutes
-      }
-    );
+    const fetchInstagram = async (fields: string) => {
+      const params = new URLSearchParams({
+        fields,
+        limit: String(limit),
+        access_token: accessToken,
+      });
+
+      return fetch(`https://graph.instagram.com/v24.0/${userId}/media?${params.toString()}`, {
+        next: { revalidate: 300 },
+      });
+    };
+
+    let response = await fetchInstagram(`${baseFields},${statsFields}`);
+    let errorData: { error?: { code?: number; message?: string } } | null = null;
 
     if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Instagram API Error:", errorData);
+      const parsedError: { error?: { code?: number; message?: string } } = await response.json();
+      errorData = parsedError;
+      const message = parsedError.error?.message || "";
+
+      if (message.includes("like_count") || message.includes("comments_count") || message.includes("Invalid field")) {
+        response = await fetchInstagram(baseFields);
+        errorData = null;
+      }
+    }
+
+    if (!response.ok) {
+      const finalError: { error?: { code?: number; message?: string } } = errorData || await response.json();
+      console.error("Instagram API Error:", finalError);
       
       // Si le token est expiré
-      if (errorData.error?.code === 190) {
+      if (finalError.error?.code === 190) {
         return NextResponse.json(
           { 
             error: "Token expired",

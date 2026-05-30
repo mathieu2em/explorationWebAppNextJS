@@ -124,7 +124,7 @@ export default function SocialFeed() {
           </p>
           {isUsingFallback && (
             <p className="text-gold-400/60 text-sm mt-2">
-              (Aperçu avec images de démonstration)
+              (Aperçu Instagram synchronisé, API live à reconnecter)
             </p>
           )}
         </motion.div>
