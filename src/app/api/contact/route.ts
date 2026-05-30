@@ -28,11 +28,9 @@ export async function POST(request: Request) {
     // Initialiser Resend avec la clé API
     const resend = new Resend(process.env.RESEND_API_KEY);
 
-    // Envoyer l'email
-    const { data, error } = await resend.emails.send({
+    const emailPayload: Parameters<typeof resend.emails.send>[0] = {
       from: "Tattoo Website <onboarding@resend.dev>", // Domaine gratuit de Resend
       to: ["mathieu.perron95@outlook.com"], // Email vérifié sur Resend
-      replyTo: email,
       subject: `🎨 Nouvelle demande de tatouage - ${name}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #0a0a0a; color: #f5f5f5; padding: 20px; border-radius: 10px;">
@@ -100,7 +98,14 @@ export async function POST(request: Request) {
           </div>
         </div>
       `,
-    });
+    };
+
+    if (email) {
+      emailPayload.replyTo = email;
+    }
+
+    // Envoyer l'email
+    const { data, error } = await resend.emails.send(emailPayload);
 
     if (error) {
       console.error("Resend error:", error);
