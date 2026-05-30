@@ -415,12 +415,34 @@ export default function ContactForm() {
     if (question.type === "options") {
       return (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {question.options?.map((option) => {
+          {question.options?.map((option, index) => {
             const selected = formData[question.id] === option;
+            const isFirstQuestion = step === 0;
             return (
-              <button
+              <motion.button
                 key={option}
                 type="button"
+                initial={{ opacity: 0, y: 12 }}
+                animate={{
+                  opacity: 1,
+                  y: isFirstQuestion && !selected ? [0, -3, 0] : 0,
+                  boxShadow: isFirstQuestion && !selected
+                    ? [
+                        "0 0 0 rgba(212, 175, 55, 0)",
+                        "0 0 22px rgba(212, 175, 55, 0.18)",
+                        "0 0 0 rgba(212, 175, 55, 0)",
+                      ]
+                    : selected
+                      ? "0 12px 34px rgba(212, 175, 55, 0.18)"
+                      : "0 0 0 rgba(212, 175, 55, 0)",
+                }}
+                transition={{
+                  opacity: { duration: 0.2, delay: index * 0.045 },
+                  y: isFirstQuestion ? { duration: 2.2, repeat: Infinity, delay: index * 0.16, ease: "easeInOut" } : { duration: 0.18 },
+                  boxShadow: isFirstQuestion ? { duration: 2.2, repeat: Infinity, delay: index * 0.16, ease: "easeInOut" } : { duration: 0.18 },
+                }}
+                whileHover={{ y: -5, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => {
                   updateField(question.id, option);
                   if (step < questions.length - 1) {
@@ -430,23 +452,30 @@ export default function ContactForm() {
                     }, 180);
                   }
                 }}
-                className={`group text-left rounded-2xl border p-4 transition-all ${
+                className={`group relative overflow-hidden text-left rounded-2xl border p-4 transition-colors ${
                   selected
-                    ? "border-gold-400 bg-gold-400/15 shadow-lg shadow-gold-400/10"
-                    : "border-ink-600 bg-ink-800/70 hover:border-gold-400/50 hover:bg-ink-700/80"
+                    ? "border-gold-400 bg-gold-400/15"
+                    : isFirstQuestion
+                      ? "border-gold-400/35 bg-gradient-to-br from-ink-800/95 to-ink-700/75 hover:border-gold-400/80 hover:bg-ink-700/90"
+                      : "border-ink-600 bg-ink-800/70 hover:border-gold-400/50 hover:bg-ink-700/80"
                 }`}
               >
-                <span className="flex items-center justify-between gap-3">
+                {isFirstQuestion && !selected && (
+                  <span className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-gold-400/10 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+                )}
+                <span className="relative flex items-center justify-between gap-3">
                   <span className="text-gray-100 font-medium">{option}</span>
-                  <span
+                  <motion.span
+                    animate={isFirstQuestion && !selected ? { x: [0, 4, 0] } : { x: 0 }}
+                    transition={isFirstQuestion ? { duration: 1.25, repeat: Infinity, delay: index * 0.12, ease: "easeInOut" } : { duration: 0.18 }}
                     className={`h-7 w-7 rounded-full border flex items-center justify-center transition-colors ${
-                      selected ? "border-gold-400 bg-gold-400 text-ink-900" : "border-ink-500 text-ink-500 group-hover:text-gold-400"
+                      selected ? "border-gold-400 bg-gold-400 text-ink-900" : "border-gold-400/50 text-gold-400 group-hover:bg-gold-400 group-hover:text-ink-900"
                     }`}
                   >
                     {selected ? <FaCheck size={12} /> : <FaArrowRight size={11} />}
-                  </span>
+                  </motion.span>
                 </span>
-              </button>
+              </motion.button>
             );
           })}
         </div>
