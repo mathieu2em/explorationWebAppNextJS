@@ -13,15 +13,15 @@
   },
   "dependencies": {
     "@sanity/image-url": "^1.1.0",
-    "@sanity/vision": "^3.99.0",
+    "@sanity/vision": "^5.9.0",
     "framer-motion": "^11.2.4",
     "next": "^14.2.35",
-    "next-sanity": "^9.12.3",
+    "next-sanity": "^12.1.0",
     "react": "^18",
     "react-dom": "^18",
     "react-icons": "^5.2.1",
     "resend": "^6.7.0",
-    "sanity": "^3.99.0"
+    "sanity": "^5.9.0"
   },
   "devDependencies": {
     "@sanity/client": "^7.14.0",
