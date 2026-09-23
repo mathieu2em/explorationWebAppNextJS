@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     const emailPayload: Parameters<typeof resend.emails.send>[0] = {
-      from: "Tattoo Website <onboarding@resend.dev>", // Domaine gratuit de Resend
+      from: "Matha Tattoo <formulaire@matha.tattoo>",
       to: ["mathieu.perron95@outlook.com"], // Email vérifié sur Resend
       subject: `🎨 Nouvelle demande de tatouage - ${name}`,
       html: `
